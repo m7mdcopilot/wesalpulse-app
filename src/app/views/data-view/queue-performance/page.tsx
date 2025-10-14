@@ -16,6 +16,9 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { DateRangeDialog } from '@/components/dashboard-wrappers/DateRangeDialog'
 import { toast } from 'sonner'
 import { 
   Search, 
@@ -38,7 +41,11 @@ import {
   Pause,
   Calendar as CalendarIcon,
   RotateCcw,
-  AlertTriangle as AlertTriangleIcon
+  AlertTriangle as AlertTriangleIcon,
+  MessageSquare,
+  Check,
+  X,
+  RefreshCw
 } from 'lucide-react'
 
 interface QueueMetric {
@@ -135,6 +142,14 @@ const timeRangeOptions = [
   { value: 'last_7_days', label: 'Last 7 Days' },
   { value: 'last_30_days', label: 'Last 30 Days' },
   { value: 'custom', label: 'Custom Range' }
+]
+
+const mediaTypeOptions = [
+  { value: 'all', label: 'All Media' },
+  { value: 'voice', label: 'Voice' },
+  { value: 'chat', label: 'Chat' },
+  { value: 'email', label: 'Email' },
+  { value: 'callback', label: 'Callback' }
 ]
 
 const mockQueueData: QueueGroup[] = [
@@ -663,8 +678,14 @@ const mockQueueData: QueueGroup[] = [
 export default function DataViewQueuePerformance() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedTimeRange, setSelectedTimeRange] = useState('last_24_hours')
+  const [selectedMediaTypes, setSelectedMediaTypes] = useState<string[]>(['all'])
+  const [selectedQueues, setSelectedQueues] = useState<string[]>(['all'])
+  const [queueSearchTerm, setQueueSearchTerm] = useState('')
+  const [availableQueues, setAvailableQueues] = useState<any[]>([])
+  const [showFilters, setShowFilters] = useState(false)
   const [showDateRangeDialog, setShowDateRangeDialog] = useState(false)
   const [dateRangeError, setDateRangeError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
   
   // Custom date range state
   const [customDateRange, setCustomDateRange] = useState<{
@@ -871,6 +892,132 @@ export default function DataViewQueuePerformance() {
   const avgAnswerRate = processedData.length > 0 ? Math.round(totals.avgAnswerRate / processedData.length) : 0
   const avgAbandonRate = processedData.length > 0 ? Math.round(totals.avgAbandonRate / processedData.length) : 0
 
+  // Initialize available queues
+  useEffect(() => {
+    setAvailableQueues([
+      { id: 'sales', name: 'Sales Queue', mediaTypes: ['voice', 'chat'] },
+      { id: 'support', name: 'Support Queue', mediaTypes: ['voice', 'email', 'chat'] },
+      { id: 'billing', name: 'Billing Queue', mediaTypes: ['voice', 'email'] },
+      { id: 'technical', name: 'Technical Support', mediaTypes: ['voice', 'chat'] },
+      { id: 'retention', name: 'Customer Retention', mediaTypes: ['voice'] }
+    ])
+  }, [])
+
+  const handleRefresh = () => {
+    setLoading(true)
+    setTimeout(() => setLoading(false), 1000)
+  }
+
+  const handleMediaTypeToggle = (value: string) => {
+    if (value === 'all') {
+      setSelectedMediaTypes(['all'])
+    } else {
+      setSelectedMediaTypes(prev => {
+        const newTypes = prev.filter(type => type !== 'all')
+        if (newTypes.includes(value)) {
+          return newTypes.length > 0 ? newTypes.filter(type => type !== value) : ['all']
+        } else {
+          return [...newTypes, value]
+        }
+      })
+    }
+  }
+
+  const handleQueueToggle = (value: string) => {
+    if (value === 'all') {
+      setSelectedQueues(['all'])
+    } else {
+      setSelectedQueues(prev => {
+        const newQueues = prev.filter(queue => queue !== 'all')
+        if (newQueues.includes(value)) {
+          return newQueues.length > 0 ? newQueues.filter(queue => queue !== value) : ['all']
+        } else {
+          return [...newQueues, value]
+        }
+      })
+    }
+  }
+
+  const getFilteredQueues = () => {
+    return availableQueues.filter(queue =>
+      queue.name.toLowerCase().includes(queueSearchTerm.toLowerCase())
+    )
+  }
+
+  const resetFilters = () => {
+    setSelectedTimeRange('last_24_hours')
+    setSelectedMediaTypes(['all'])
+    setSelectedQueues(['all'])
+    setQueueSearchTerm('')
+    setDateRangeError(null)
+  }
+
+  // Date range handlers
+  const handleCustomDateRangeChange = (range: {
+    startDate: Date | undefined
+    endDate: Date | undefined
+    startTime: string
+    endTime: string
+  }) => {
+    setCustomDateRange(range)
+  }
+
+  const handleDateRangeErrorChange = (error: string | null) => {
+    setDateRangeError(error)
+  }
+
+  const handleApplyDateRange = () => {
+    handleRefresh()
+  }
+
+  const getMediaTypeIcon = (mediaType: string) => {
+    switch (mediaType) {
+      case 'voice': return <Phone className="h-3 w-3" />
+      case 'chat': return <MessageSquare className="h-3 w-3" />
+      case 'email': return <RotateCcw className="h-3 w-3" />
+      case 'callback': return <RefreshCw className="h-3 w-3" />
+      default: return <Users className="h-3 w-3" />
+    }
+  }
+
+  const getMediaTypeColor = (mediaType: string) => {
+    switch (mediaType) {
+      case 'voice': return 'bg-blue-100 text-blue-800'
+      case 'chat': return 'bg-green-100 text-green-800'
+      case 'email': return 'bg-purple-100 text-purple-800'
+      case 'callback': return 'bg-orange-100 text-orange-800'
+      default: return 'bg-gray-100 text-gray-800'
+    }
+  }
+
+  const getSelectedMediaTypesLabel = () => {
+    if (selectedMediaTypes.includes('all')) return 'All Media'
+    return selectedMediaTypes.join(', ')
+  }
+
+  const getSelectedQueuesLabel = () => {
+    if (selectedQueues.includes('all')) return 'All Queues'
+    return selectedQueues.map(id => availableQueues.find(q => q.id === id)?.name || id).join(', ')
+  }
+
+  // Date Range Dialog Content
+  const dateRangeDialogContent = (
+    <DateRangeDialog
+      showDateRangeDialog={showDateRangeDialog}
+      customDateRange={customDateRange}
+      dateRangeError={dateRangeError}
+      selectedTimeRange={selectedTimeRange}
+      onDateRangeDialogChange={setShowDateRangeDialog}
+      onCustomDateRangeChange={handleCustomDateRangeChange}
+      onSelectedTimeRangeChange={setSelectedTimeRange}
+      onDateRangeErrorChange={handleDateRangeErrorChange}
+      onApplyDateRange={handleApplyDateRange}
+      formatTime={formatTime}
+      onFetchDashboardData={handleRefresh}
+      isLoading={loading}
+    />
+  )
+
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar Navigation */}
@@ -879,78 +1026,119 @@ export default function DataViewQueuePerformance() {
       {/* Main Content */}
       <div className="flex-1 overflow-auto">
         <div className="p-6 space-y-6">
-          {/* Header */}
+          {/* Header with Action Buttons */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Queue Performance</h1>
-              <p className="text-gray-600 mt-2">Monitor and analyze queue performance metrics across all voice queues</p>
+            <div className="min-w-0 flex-1">
+              <h1 className="text-3xl font-bold tracking-tight">Queue Performance</h1>
+              <p className="text-muted-foreground">
+                Comprehensive queue performance metrics and analytics
+              </p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-3">
-              {/* Date Range and Actions */}
-              <div className="flex gap-2">
-                <Select value={selectedTimeRange} onValueChange={(value) => {
-                  if (value === 'custom') {
-                    setShowDateRangeDialog(true)
-                  }
-                  applyQuickRange(value)
-                }}>
-                  <SelectTrigger className="w-44">
-                    <CalendarIcon className="h-4 w-4 mr-2" />
-                    <SelectValue>{getFormattedDateRangeDisplay()}</SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    {timeRangeOptions.map(option => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Button variant="outline" onClick={handleRefresh} className="cursor-pointer">
-                  <RotateCcw className="h-4 w-4 mr-2" />
-                  Refresh
-                </Button>
-                <Button variant="outline" onClick={handleExportData} className="cursor-pointer">
-                  <Download className="h-4 w-4 mr-2" />
-                  Export Data
-                </Button>
-              </div>
+            <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setShowFilters(!showFilters)}
+                className="cursor-pointer transition-all duration-200 hover:scale-105"
+              >
+                <Filter className="h-4 w-4 mr-2" />
+                {showFilters ? 'Hide' : 'Show'} Filters
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleRefresh}
+                disabled={loading}
+                className="cursor-pointer transition-all duration-200 hover:scale-105 disabled:hover:scale-100"
+              >
+                <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+                Refresh
+              </Button>
             </div>
           </div>
 
-          {/* Date Range Display */}
-          <DateRangeDisplay 
-            selectedTimeRange={selectedTimeRange}
-            customDateRange={customDateRange}
-            onEdit={() => setShowDateRangeDialog(true)}
-          />
-
-          {/* Filters */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Filters</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-4">
-                <div className="flex-1 min-w-[300px]">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                    <Input
-                      placeholder="Search queues..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
-                </div>
-                {searchTerm && (
-                  <div className="flex items-center text-sm text-gray-500">
-                    Showing {filteredData.length} of {processedData.length} queues
-                  </div>
-                )}
+          {/* Active Filters Display - Show on top in one line */}
+          <div className="flex flex-wrap gap-2 items-center p-1 mb-1 bg-muted/50 rounded-lg">
+            <span className="text-sm font-bold text-muted-foreground">Active Filters</span>
+            
+            {/* Date Range Section */}
+            <CalendarIcon className="h-4 w-4 ml-2 text-muted-foreground flex-shrink-0" />
+            <span className="text-sm font-medium text-muted-foreground">Date:</span>
+            <Badge variant="secondary">
+              {selectedTimeRange === 'custom' && customDateRange.startDate && customDateRange.endDate ? (
+                <span>
+                  {(() => {
+                    const startDateTime = new Date(customDateRange.startDate);
+                    const endDateTime = new Date(customDateRange.endDate);
+                    const [startHour, startMinute, startSecond] = customDateRange.startTime.split(':').map(Number);
+                    const [endHour, endMinute, endSecond] = customDateRange.endTime.split(':').map(Number);
+                    
+                    startDateTime.setHours(startHour, startMinute, startSecond || 0);
+                    endDateTime.setHours(endHour, endMinute, endSecond || 59);
+                    
+                    return `${format(startDateTime, 'MMM dd, yyyy HH:mm:ss')} - ${format(endDateTime, 'MMM dd, yyyy HH:mm:ss')}`;
+                  })()}
+                </span>
+              ) : (
+                timeRangeOptions.find(opt => opt.value === selectedTimeRange)?.label || 'Select range'
+              )}
+            </Badge>
+            
+            {/* Media Type Section */}
+            <MessageSquare className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+            <span className="text-sm font-medium text-muted-foreground">Media Type:</span>
+            
+            {/* Individual Media Type Badges */}
+            {selectedMediaTypes.includes('all') ? (
+              <Badge variant="secondary">
+                All Media
+              </Badge>
+            ) : (
+              <div className="flex gap-1">
+                {selectedMediaTypes.map(type => (
+                  <Badge key={type} variant="outline" className={getMediaTypeColor(type)}>
+                    <div className="flex items-center gap-1">
+                      {getMediaTypeIcon(type)}
+                      {type}
+                    </div>
+                  </Badge>
+                ))}
               </div>
-            </CardContent>
-          </Card>
+            )}
+            
+            {/* Queues Section */}
+            <Users className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+            <span className="text-sm font-medium text-muted-foreground">Queues:</span>
+            
+            {/* Individual Queue Badges */}
+            {selectedQueues.includes('all') ? (
+              <Badge variant="secondary">
+                All Queues
+              </Badge>
+            ) : (
+              <div className="flex gap-1">
+                {selectedQueues.map(queueId => {
+                  const queue = availableQueues.find(q => q.id === queueId)
+                  return (
+                    <Badge key={queueId} variant="outline" className="bg-gray-100 text-gray-800">
+                      {queue?.name || queueId}
+                    </Badge>
+                  )
+                })}
+              </div>
+            )}
+            
+            {/* Reset Filters Button */}
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={resetFilters}
+              className="ml-auto h-6 px-2 text-xs"
+            >
+              <X className="h-3 w-3 mr-1" />
+              Clear
+            </Button>
+          </div>
 
           {/* Queue Performance Table */}
           <div className="space-y-4">
@@ -958,6 +1146,188 @@ export default function DataViewQueuePerformance() {
           </div>
         </div>
       </div>
+
+      {/* Filters Panel */}
+      {showFilters && (
+        <>
+          <div className="fixed inset-0 bg-black/50 z-30 lg:hidden" onClick={() => setShowFilters(false)} />
+          <div className="fixed inset-y-0 right-0 w-full sm:w-96 bg-white shadow-lg z-40 transform transition-transform duration-300 ease-in-out lg:static lg:inset-0 lg:bg-transparent lg:shadow-none lg:transform-none lg:transition-none lg:z-auto">
+            <div className="h-full overflow-y-auto p-6 space-y-6">
+              {/* Header */}
+              <div className="flex items-center justify-between lg:hidden">
+                <h2 className="text-lg font-semibold">Filters</h2>
+                <Button variant="ghost" size="sm" onClick={() => setShowFilters(false)}>
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+
+              <div className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <CalendarIcon className="h-5 w-5" />
+                      Time Range
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Select Time Range</label>
+                      <Select value={selectedTimeRange} onValueChange={(value) => {
+                        if (value === 'custom') {
+                          setShowDateRangeDialog(true)
+                        }
+                        setSelectedTimeRange(value)
+                      }}>
+                        <SelectTrigger>
+                          <SelectValue>
+                            {selectedTimeRange === 'custom' && customDateRange.startDate && customDateRange.endDate 
+                              ? `${format(customDateRange.startDate, 'MMM dd, yyyy')} - ${format(customDateRange.endDate, 'MMM dd, yyyy')}`
+                              : timeRangeOptions.find(opt => opt.value === selectedTimeRange)?.label || 'Select range'
+                            }
+                          </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          {timeRangeOptions.map(option => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {selectedTimeRange === 'custom' && customDateRange.startDate && customDateRange.endDate && (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setShowDateRangeDialog(true)}
+                        className="w-full flex items-center gap-2 cursor-pointer"
+                      >
+                        <CalendarIcon className="h-3 w-3 mr-2" />
+                        Edit Range
+                      </Button>
+                    )}
+
+                    {/* Custom Date Range Picker */}
+                    {selectedTimeRange === 'custom' && (!customDateRange.startDate || !customDateRange.endDate) && (
+                      <div className="space-y-4 border-t pt-4">
+                        <Button 
+                          onClick={() => {
+                            setShowDateRangeDialog(true)
+                          }}
+                          className="w-full flex items-center gap-2 cursor-pointer"
+                          variant="outline"
+                        >
+                          <CalendarIcon className="h-4 w-4" />
+                          Configure Date Range
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Users className="h-5 w-5" />
+                      Queues
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Select Queues</label>
+                      <div className="space-y-3">
+                        {/* Search Input */}
+                        <div className="relative">
+                          <Input
+                            placeholder="Search queues..."
+                            value={queueSearchTerm}
+                            onChange={(e) => setQueueSearchTerm(e.target.value)}
+                            className="pr-8"
+                          />
+                          {queueSearchTerm && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="absolute right-1 top-1 h-6 w-6 p-0 cursor-pointer"
+                              onClick={() => setQueueSearchTerm('')}
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          )}
+                        </div>
+                        
+                        {/* All Queues Option */}
+                        <Button
+                          variant={selectedQueues.includes('all') ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => handleQueueToggle('all')}
+                          className="w-full justify-start cursor-pointer"
+                        >
+                          <Check className="h-4 w-4 mr-2" />
+                          All Queues
+                        </Button>
+                        
+                        {/* Queue List */}
+                        <div className="max-h-60 overflow-y-auto space-y-1">
+                          {getFilteredQueues().map(queue => (
+                            <Button
+                              key={queue.id}
+                              variant={selectedQueues.includes(queue.id) ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => handleQueueToggle(queue.id)}
+                              className="w-full justify-start cursor-pointer"
+                            >
+                              <div className="flex items-center gap-2">
+                                {selectedQueues.includes(queue.id) ? (
+                                  <CheckCircle className="h-4 w-4" />
+                                ) : (
+                                  <span className="h-4 w-4 border border-gray-300 rounded-full" />
+                                )}
+                                <span className="text-sm">{queue.name}</span>
+                              </div>
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="mt-6">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <MessageSquare className="h-5 w-5" />
+                      Media Type
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Select Media Types</label>
+                      <div className="grid grid-cols-2 gap-2">
+                        {mediaTypeOptions.map(option => (
+                          <Button
+                            key={option.value}
+                            variant={selectedMediaTypes.includes(option.value) ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => handleMediaTypeToggle(option.value)}
+                            className="justify-start cursor-pointer"
+                          >
+                            <div className="flex items-center gap-2">
+                              {getMediaTypeIcon(option.value)}
+                              {option.label}
+                            </div>
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Date Range Dialog */}
       <Dialog open={showDateRangeDialog} onOpenChange={setShowDateRangeDialog}>
