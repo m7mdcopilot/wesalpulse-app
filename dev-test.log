@@ -1796,3 +1796,81 @@ User defined signal 2
   address: '0.0.0.0',
   port: 3000
 }
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `npx tsx server.ts`[39m
+ ⨯ uncaughtException: Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+ ⨯ uncaughtException:  Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `npx tsx server.ts`[39m
+ ⨯ uncaughtException: Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+ ⨯ uncaughtException:  Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `npx tsx server.ts`[39m
+> Ready on http://0.0.0.0:3000
+> Socket.IO server running at ws://0.0.0.0:3000/api/socketio
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 942ms (109 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 5.9s (892 modules)
+ GET / 200 in 6661ms
+ GET / 200 in 4998ms
+ GET / 200 in 3930ms
+ GET / 200 in 1980ms
+ GET / 200 in 1589ms
+ GET / 200 in 6785ms
+ GET / 200 in 142ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 870ms (916 modules)
+ GET /api/auth/me 401 in 1614ms
+MongoDB connected successfully
+ GET /api/call-center-status 200 in 6540ms
+ ⚠ Cross origin request detected from preview-chat-c71d345f-b730-4304-bf27-903fe2fccc4d.space.z.ai to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+ GET / 200 in 242ms
+ GET /api/auth/me 401 in 18ms
+ GET /api/call-center-status 200 in 597ms
+ ○ Compiling /views/data-view/queue-performance ...
+ ✓ Compiled /views/data-view/queue-performance in 4.1s (1868 modules)
+ GET /views/data-view/queue-performance 200 in 4693ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 645ms (1905 modules)
+ GET /api/auth/me 401 in 770ms
+ GET /api/queue-performance 200 in 1403ms
+ ○ Compiling / ...
+ ✓ Compiled / in 507ms (1029 modules)
+ GET / 200 in 729ms
+ GET /api/auth/me 401 in 34ms
+ ✓ Compiled /api/call-center-status in 390ms (1031 modules)
+ GET / 200 in 176ms
+ GET /api/call-center-status 200 in 1043ms
+ GET /api/auth/me 401 in 15ms
+ GET /api/call-center-status 200 in 582ms
+ GET / 200 in 73ms

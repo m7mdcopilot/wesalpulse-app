@@ -540,40 +540,47 @@ MongoDB connected successfully
   address: '0.0.0.0',
   port: 3000
 }
-http://0.0.0.0:3000
-> Socket.IO server running at ws://0.0.0.0:3000/api/socketio
- ○ Compiling /middleware ...
- ✓ Compiled /middleware in 932ms (109 modules)
- ○ Compiling / ...
- ✓ Compiled / in 5.9s (892 modules)
- GET / 200 in 4407ms
- GET / 200 in 80ms
- ○ Compiling /api/call-center-status ...
- ✓ Compiled /api/call-center-status in 884ms (916 modules)
- GET /api/auth/me 401 in 1692ms
-MongoDB connected successfully
- GET /api/call-center-status 200 in 5914ms
- GET / 200 in 213ms
- GET /api/auth/me 401 in 12ms
- GET /api/call-center-status 200 in 603ms
- ⚠ Cross origin request detected from preview-chat-c71d345f-b730-4304-bf27-903fe2fccc4d.space.z.ai to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
-Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
- ○ Compiling /analytics/queues ...
- ✓ Compiled /analytics/queues in 6.9s (2962 modules)
- GET /analytics/queues 200 in 7539ms
- GET /api/auth/me 401 in 38ms
- GET / 200 in 119ms
- GET / 200 in 74ms
- GET /api/auth/me 401 in 76ms
- GET /api/call-center-status 200 in 642ms
- GET / 200 in 97ms
- GET /api/auth/me 401 in 15ms
- GET /api/call-center-status 200 in 587ms
- GET / 200 in 82ms
- GET /api/auth/me 401 in 10ms
- GET /api/call-center-status 200 in 583ms
 [32m[nodemon] restarting due to changes...[39m
 [32m[nodemon] starting `npx tsx server.ts`[39m
+ ⨯ uncaughtException: Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+ ⨯ uncaughtException:  Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `npx tsx server.ts`[39m
+> Ready on http://0.0.0.0:3000
+> Socket.IO server running at ws://0.0.0.0:3000/api/socketio
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `npx tsx server.ts`[39m
+ ⨯ uncaughtException: Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+ ⨯ uncaughtException:  Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+rver.ts`[39m
  ⨯ uncaughtException: Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
     at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
   code: 'EADDRINUSE',
@@ -676,18 +683,161 @@ Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allow
  ✓ Compiled /middleware in 771ms (109 modules)
  ○ Compiling / ...
  ✓ Compiled / in 5.9s (892 modules)
- GET / 200 in 1285ms
+ [32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `npx tsx server.ts`[39m
+ ⨯ uncaughtException: Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+ ⨯ uncaughtException:  Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `npx tsx server.ts`[39m
+ ⨯ uncaughtException: Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+ ⨯ uncaughtException:  Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/home/z/my-project/.next/cache/webpack/client-development/0.pack.gz_' -> '/home/z/my-project/.next/cache/webpack/client-development/0.pack.gz'
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `npx tsx server.ts`[39m
+ ⨯ uncaughtException: Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+ ⨯ uncaughtException:  Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+odule parse failed: Identifier 'Button' has already been declared (17:9)
+| import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+| import { Badge } from '@/components/ui/badge';
+> import { Button } from '@/components/ui/button';
+| import { DateRangeDialog } from '@/components/dashboard-wrappers/DateRangeDialog';
+| import { toast } from 'sonner';
+
+Import trace for requested module:
+./src/app/views/data-view/queue-performance/page.tsx
+ GET /views/data-view/queue-performance 500 in 6114ms
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `npx tsx server.ts`[39m
+> Ready on http://0.0.0.0:3000
+> Socket.IO server running at ws://0.0.0.0:3000/api/socketio
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 828ms (109 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 6s (892 modules)
+ GET / 200 in 4059ms
+ GET / 200 in 4849ms
+ GET / 200 in 1853ms
+ GET / 200 in 1638ms
+ GET / 200 in 6832ms
+ GET / 200 in 6754ms
+ GET / 200 in 92ms
+ GET / 200 in 74ms
  GET / 200 in 76ms
- ○ Compiling /api/call-center-status ...
- ✓ Compiled /api/call-center-status in 918ms (916 modules)
- GET /api/auth/me 401 in 1746ms
+ GET / 200 in 86ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 1017ms (916 modules)
+ GET /api/auth/me 401 in 1833ms
 MongoDB connected successfully
- GET /api/call-center-status 200 in 6687ms
+ GET /api/call-center-status 200 in 6078ms
  ⚠ Cross origin request detected from preview-chat-c71d345f-b730-4304-bf27-903fe2fccc4d.space.z.ai to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
 Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
- GET / 200 in 203ms
- GET /api/auth/me 401 in 16ms
- GET /api/call-center-status 200 in 582ms
- GET / 200 in 70ms
- GET /api/auth/me 401 in 19ms
- GET /api/call-center-status 200 in 587ms
+ ⨯ ./src/app/views/data-view/queue-performance/page.tsx
+Module parse failed: Identifier 'loading' has already been declared (2249:11)
+|     // API data fetching
+|     const [queueData, setQueueData] = useState([]);
+>     const [loading, setLoading] = useState(false);
+|     const fetchQueueData = async ()=>{
+|         setLoading(true);
+
+Import trace for requested module:
+./src/app/views/data-view/queue-performance/page.tsx
+ ○ Compiling /_not-found ...
+ ⨯ ./src/app/views/data-view/queue-performance/page.tsx
+Module parse failed: Identifier 'loading' has already been declared (2249:11)
+|     // API data fetching
+|     const [queueData, setQueueData] = useState([]);
+>     const [loading, setLoading] = useState(false);
+|     const fetchQueueData = async ()=>{
+|         setLoading(true);
+
+Import trace for requested module:
+./src/app/views/data-view/queue-performance/page.tsx
+ ⨯ ./src/app/views/data-view/queue-performance/page.tsx
+Module parse failed: Identifier 'loading' has already been declared (2249:11)
+|     // API data fetching
+|     const [queueData, setQueueData] = useState([]);
+>     const [loading, setLoading] = useState(false);
+|     const fetchQueueData = async ()=>{
+|         setLoading(true);
+
+Import trace for requested module:
+./src/app/views/data-view/queue-performance/page.tsx
+ GET /views/data-view/queue-performance 500 in 6466ms
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `npx tsx server.ts`[39m
+ ⨯ uncaughtException: Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+ ⨯ uncaughtException:  Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `npx tsx server.ts`[39m
+ ⨯ uncaughtException: Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+ ⨯ uncaughtException:  Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
