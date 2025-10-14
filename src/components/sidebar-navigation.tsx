@@ -262,6 +262,32 @@ export function SidebarNavigation({ className }: SidebarNavigationProps) {
       )
     }
 
+    // Handle case when hasChildren but isCollapsed - show a simple button
+    if (hasChildren && isCollapsed) {
+      return (
+        <Button
+          key={item.id}
+          variant="ghost"
+          className={cn(
+            "w-full justify-start transition-all duration-300 ease-in-out group relative overflow-hidden",
+            "rounded-xl border border-transparent bg-gradient-to-r from-background to-muted/20",
+            "hover:from-primary/5 hover:to-primary/10 hover:border-primary/20 hover:shadow-lg",
+            "hover:scale-[1.02] active:scale-[0.98]",
+            "before:absolute before:inset-0 before:bg-gradient-to-r before:from-primary/10 before:to-transparent before:opacity-0 before:transition-opacity before:duration-300",
+            "hover:before:opacity-100",
+            "px-3 py-3",
+            "backdrop-blur-sm"
+          )}
+          onClick={() => toggleSubmenu(item.id)}
+          title={item.label}
+        >
+          <div className="flex items-center justify-center w-6 h-6 text-primary group-hover:text-primary transition-colors">
+            {item.icon}
+          </div>
+        </Button>
+      )
+    }
+
     return (
       <Button
         key={item.id}
