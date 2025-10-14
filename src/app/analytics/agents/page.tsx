@@ -131,7 +131,7 @@ const departmentOptions = [
 ]
 
 const mediaTypeOptions = [
-  { value: 'all', label: 'All Media Types' },
+  { value: 'all', label: 'Media Type' },
   { value: 'voice', label: 'Voice' },
   { value: 'chat', label: 'Chat' },
   { value: 'email', label: 'Email' },
@@ -347,6 +347,11 @@ export default function AgentPerformanceAnalytics() {
     setTimeout(() => setLoading(false), 1000)
   }
 
+  const handleApplyAndCloseFilters = () => {
+    handleRefresh()
+    setShowFilters(false)
+  }
+
   const handleStatusToggle = (value: string) => {
     if (value === 'all') {
       setSelectedStatuses(['all'])
@@ -460,6 +465,11 @@ export default function AgentPerformanceAnalytics() {
   const getSelectedAgentsLabel = () => {
     if (selectedAgents.includes('all')) return 'All Agents'
     return selectedAgents.map(id => availableAgents.find(a => a.id === id)?.name || id).join(', ')
+  }
+
+  const getSelectedMediaTypesLabel = () => {
+    if (selectedMediaTypes.includes('all')) return 'All Media'
+    return selectedMediaTypes.join(', ')
   }
 
   // Date range handlers
@@ -648,44 +658,22 @@ export default function AgentPerformanceAnalytics() {
             )}
           </Badge>
           
-          {/* Status Section */}
-          <User className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-          <span className="text-sm font-medium text-muted-foreground">Status:</span>
+          {/* Media Type Section */}
+          <MessageSquare className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+          <span className="text-sm font-medium text-muted-foreground">Media Type:</span>
           
-          {/* Individual Status Badges */}
-          {selectedStatuses.includes('all') ? (
+          {/* Individual Media Type Badges */}
+          {selectedMediaTypes.includes('all') ? (
             <Badge variant="secondary">
-              All Status
+              All Media
             </Badge>
           ) : (
             <div className="flex gap-1">
-              {selectedStatuses.map(status => (
-                <Badge key={status} variant="outline" className="bg-blue-100 text-blue-800">
+              {selectedMediaTypes.map(type => (
+                <Badge key={type} variant="outline" className={getMediaTypeColor(type)}>
                   <div className="flex items-center gap-1">
-                    <User className="h-3 w-3" />
-                    {statusOptions.find(opt => opt.value === status)?.label || status}
-                  </div>
-                </Badge>
-              ))}
-            </div>
-          )}
-          
-          {/* Department Section */}
-          <Building className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-          <span className="text-sm font-medium text-muted-foreground">Department:</span>
-          
-          {/* Individual Department Badges */}
-          {selectedDepartments.includes('all') ? (
-            <Badge variant="secondary">
-              All Departments
-            </Badge>
-          ) : (
-            <div className="flex gap-1">
-              {selectedDepartments.map(dept => (
-                <Badge key={dept} variant="outline" className="bg-purple-100 text-purple-800">
-                  <div className="flex items-center gap-1">
-                    <Building className="h-3 w-3" />
-                    {departmentOptions.find(opt => opt.value === dept)?.label || dept}
+                    {getMediaTypeIcon(type)}
+                    {type}
                   </div>
                 </Badge>
               ))}
@@ -950,7 +938,7 @@ export default function AgentPerformanceAnalytics() {
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  onClick={handleRefresh}
+                  onClick={handleApplyAndCloseFilters}
                   disabled={loading}
                   className="w-full cursor-pointer"
                 >
@@ -1039,15 +1027,66 @@ export default function AgentPerformanceAnalytics() {
         </div>
 
         {/* Charts and Tables */}
-        <Tabs defaultValue="performance-overview" className="space-y-4">
+        <Tabs defaultValue="agent-table" className="space-y-4">
           <TabsList className="grid w-full grid-cols-6">
+            <TabsTrigger value="agent-table">Agent Performance Table</TabsTrigger>
             <TabsTrigger value="performance-overview">Performance Overview</TabsTrigger>
             <TabsTrigger value="time-analysis">Time Analysis</TabsTrigger>
             <TabsTrigger value="quality-metrics">Quality Metrics</TabsTrigger>
             <TabsTrigger value="adherence">Adherence</TabsTrigger>
-            <TabsTrigger value="agent-table">Agent Table</TabsTrigger>
             <TabsTrigger value="satisfaction">Satisfaction</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="agent-table" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Agent Performance Table</CardTitle>
+                <CardDescription>
+                  Detailed performance metrics for all agents
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Agent Name</TableHead>
+                      <TableHead className="text-right">Total Calls</TableHead>
+                      <TableHead className="text-right">Answered</TableHead>
+                      <TableHead className="text-right">Avg Handle</TableHead>
+                      <TableHead className="text-right">Quality Score</TableHead>
+                      <TableHead className="text-right">Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {agentMetrics.map((agent) => (
+                      <TableRow key={agent.agentId}>
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-2">
+                            <User className="h-4 w-4" />
+                            {agent.agentName}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">{agent.totalCalls}</TableCell>
+                        <TableCell className="text-right">{agent.answeredCalls}</TableCell>
+                        <TableCell className="text-right">{agent.averageHandleTime}</TableCell>
+                        <TableCell className="text-right">
+                          <Badge variant={agent.qualityScore > 85 ? "default" : "secondary"}>
+                            {agent.qualityScore}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Badge variant="outline" className={getStatusColor(agent.status)}>
+                            {getStatusIcon(agent.status)}
+                            {agent.status.replace('_', ' ')}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           <TabsContent value="performance-overview" className="space-y-4">
             <Card>
@@ -1146,57 +1185,6 @@ export default function AgentPerformanceAnalytics() {
                     <Bar dataKey="value" fill="#ffc658" />
                   </BarChart>
                 </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="agent-table" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Agent Performance Table</CardTitle>
-                <CardDescription>
-                  Detailed performance metrics for all agents
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Agent Name</TableHead>
-                      <TableHead className="text-right">Total Calls</TableHead>
-                      <TableHead className="text-right">Answered</TableHead>
-                      <TableHead className="text-right">Avg Handle</TableHead>
-                      <TableHead className="text-right">Quality Score</TableHead>
-                      <TableHead className="text-right">Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {agentMetrics.map((agent) => (
-                      <TableRow key={agent.agentId}>
-                        <TableCell className="font-medium">
-                          <div className="flex items-center gap-2">
-                            <User className="h-4 w-4" />
-                            {agent.agentName}
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-right">{agent.totalCalls}</TableCell>
-                        <TableCell className="text-right">{agent.answeredCalls}</TableCell>
-                        <TableCell className="text-right">{agent.averageHandleTime}</TableCell>
-                        <TableCell className="text-right">
-                          <Badge variant={agent.qualityScore > 85 ? "default" : "secondary"}>
-                            {agent.qualityScore}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Badge variant="outline" className={getStatusColor(agent.status)}>
-                            {getStatusIcon(agent.status)}
-                            {agent.status.replace('_', ' ')}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
               </CardContent>
             </Card>
           </TabsContent>
