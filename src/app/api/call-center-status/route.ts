@@ -69,7 +69,7 @@ export async function GET() {
       averageTalkTime: '3:18', // 3 minutes 18 seconds average talk time
       averageWrapUpTime: '1:14', // 1 minute 14 seconds average wrap-up time
       serviceLevel: '84.5%', // Service level agreement achievement
-      metServiceLevel: '82.1%', // Percentage of calls meeting service level
+      metServiceLevel: 321, // Total number of calls that met service level (82.1% of 392)
       firstCallResolution: '78.9%', // First call resolution rate
       lastUpdated: new Date().toISOString()
     };
