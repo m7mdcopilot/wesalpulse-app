@@ -44,8 +44,15 @@ import {
   MessageSquare,
   Check,
   X,
-  RefreshCw
+  RefreshCw,
+  Building
 } from 'lucide-react'
+
+interface QueueOption {
+  id: string
+  name: string
+  mediaTypes: string[]
+}
 
 interface QueueMetric {
   metric: string
@@ -756,24 +763,42 @@ export default function DataViewQueuePerformance() {
     return true
   }, [])
 
-  const applyCustomDateRange = useCallback(() => {
-    if (validateDateRange(customDateRange)) {
-      setShowDateRangeDialog(false)
-      setSelectedTimeRange('custom')
-      toast.success('Custom date range applied successfully')
-    }
-  }, [customDateRange, validateDateRange])
+  // Date range handlers
+  const handleCustomDateRangeChange = (range: {
+    startDate: Date | undefined
+    endDate: Date | undefined
+    startTime: string
+    endTime: string
+  }) => {
+    setCustomDateRange(range)
+  }
 
-  const applyQuickRange = useCallback((rangeType: string) => {
-    setSelectedTimeRange(rangeType)
-    if (rangeType === 'custom') {
-      setShowDateRangeDialog(true)
-    } else {
-      toast.success(`${rangeType.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} range applied successfully`)
-    }
-  }, [])
+  const handleDateRangeErrorChange = (error: string | null) => {
+    setDateRangeError(error)
+  }
 
-  // Process the queue data
+  const handleApplyDateRange = () => {
+    // This will be called when the date range is applied
+    handleRefresh()
+  }
+
+  // Date Range Dialog Content - Using the sophisticated DateRangeDialog component
+  const dateRangeDialogContent = (
+    <DateRangeDialog
+      showDateRangeDialog={showDateRangeDialog}
+      customDateRange={customDateRange}
+      dateRangeError={dateRangeError}
+      selectedTimeRange={selectedTimeRange}
+      onDateRangeDialogChange={setShowDateRangeDialog}
+      onCustomDateRangeChange={handleCustomDateRangeChange}
+      onSelectedTimeRangeChange={setSelectedTimeRange}
+      onDateRangeErrorChange={handleDateRangeErrorChange}
+      onApplyDateRange={handleApplyDateRange}
+      formatTime={formatTime}
+      onFetchDashboardData={handleRefresh}
+      isLoading={loading}
+    />
+  )
   const processedData: ProcessedQueueData[] = queueData.map(queue => {
     // Transform API data to match ProcessedQueueData interface
     return {
@@ -993,23 +1018,7 @@ export default function DataViewQueuePerformance() {
     return selectedQueues.map(id => availableQueues.find(q => q.id === id)?.name || id).join(', ')
   }
 
-  // Date Range Dialog Content
-  const dateRangeDialogContent = (
-    <DateRangeDialog
-      showDateRangeDialog={showDateRangeDialog}
-      customDateRange={customDateRange}
-      dateRangeError={dateRangeError}
-      selectedTimeRange={selectedTimeRange}
-      onDateRangeDialogChange={setShowDateRangeDialog}
-      onCustomDateRangeChange={handleCustomDateRangeChange}
-      onSelectedTimeRangeChange={setSelectedTimeRange}
-      onDateRangeErrorChange={handleDateRangeErrorChange}
-      onApplyDateRange={handleApplyDateRange}
-      formatTime={formatTime}
-      onFetchDashboardData={handleRefresh}
-      isLoading={loading}
-    />
-  )
+
 
   return (
     <div className="flex h-screen bg-gray-50">
