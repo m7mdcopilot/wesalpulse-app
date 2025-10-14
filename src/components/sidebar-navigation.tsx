@@ -210,7 +210,14 @@ export function SidebarNavigation({ className }: SidebarNavigationProps) {
   const renderNavItem = useCallback((item: NavItem, level: number = 0) => {
     const hasChildren = item.children && item.children.length > 0
     const isExpanded = expandedItems.includes(item.id)
-    const isActive = item.href && pathname === item.href
+    const isActive = item.href ? pathname === item.href : false
+    
+    // Check if any child is active to highlight parent
+    const hasActiveChild = hasChildren && item.children!.some(child => 
+      child.href === pathname || (child.children && child.children.some(grandchild => grandchild.href === pathname))
+    )
+    
+    const shouldHighlight = isActive || hasActiveChild
 
     if (hasChildren && !isCollapsed) {
       return (
@@ -220,8 +227,10 @@ export function SidebarNavigation({ className }: SidebarNavigationProps) {
             className={cn(
               "w-full justify-start transition-all duration-300 ease-in-out group relative overflow-hidden",
               "rounded-xl border border-transparent bg-gradient-to-r from-background to-muted/20",
-              "hover:from-primary/5 hover:to-primary/10 hover:border-primary/20 hover:shadow-lg",
-              "hover:scale-[1.02] active:scale-[0.98]",
+              shouldHighlight 
+                ? "bg-gradient-to-r from-primary/10 to-primary/5 border-primary/30 shadow-lg shadow-primary/10" 
+                : "hover:from-primary/5 hover:to-primary/10 hover:border-primary/20 hover:shadow-lg",
+              "hover:scale-[1.04] active:scale-[0.96]",
               "before:absolute before:inset-0 before:bg-gradient-to-r before:from-primary/10 before:to-transparent before:opacity-0 before:transition-opacity before:duration-300",
               "hover:before:opacity-100",
               isCollapsed ? "px-3 py-3" : "px-4 py-3",
@@ -271,8 +280,10 @@ export function SidebarNavigation({ className }: SidebarNavigationProps) {
           className={cn(
             "w-full justify-start transition-all duration-300 ease-in-out group relative overflow-hidden",
             "rounded-xl border border-transparent bg-gradient-to-r from-background to-muted/20",
-            "hover:from-primary/5 hover:to-primary/10 hover:border-primary/20 hover:shadow-lg",
-            "hover:scale-[1.02] active:scale-[0.98]",
+            shouldHighlight 
+              ? "bg-gradient-to-r from-primary/10 to-primary/5 border-primary/30 shadow-lg shadow-primary/10" 
+              : "hover:from-primary/5 hover:to-primary/10 hover:border-primary/20 hover:shadow-lg",
+            "hover:scale-[1.04] active:scale-[0.96]",
             "before:absolute before:inset-0 before:bg-gradient-to-r before:from-primary/10 before:to-transparent before:opacity-0 before:transition-opacity before:duration-300",
             "hover:before:opacity-100",
             "px-3 py-3",
@@ -298,7 +309,7 @@ export function SidebarNavigation({ className }: SidebarNavigationProps) {
           isActive 
             ? "bg-gradient-to-r from-primary to-primary/90 text-white border-primary/30 shadow-lg shadow-primary/20" 
             : "bg-gradient-to-r from-background to-muted/20 hover:from-primary/5 hover:to-primary/10 hover:border-primary/20 hover:shadow-lg",
-          "hover:scale-[1.02] active:scale-[0.98]",
+          "hover:scale-[1.04] active:scale-[0.96]",
           "before:absolute before:inset-0 before:bg-gradient-to-r before:from-white/10 before:to-transparent before:opacity-0 before:transition-opacity before:duration-300",
           "hover:before:opacity-100",
           isCollapsed ? "px-3 py-3" : level === 0 ? "px-4 py-3" : "px-6 py-2.5",
@@ -339,7 +350,7 @@ export function SidebarNavigation({ className }: SidebarNavigationProps) {
             "w-full justify-start transition-all duration-300 ease-in-out group cursor-pointer relative overflow-hidden",
             "rounded-xl border border-transparent bg-gradient-to-r from-background to-muted/20",
             "hover:from-red-50 hover:to-red-100 hover:border-red-200 hover:shadow-lg",
-            "hover:scale-[1.02] active:scale-[0.98]",
+            "hover:scale-[1.04] active:scale-[0.96]",
             isCollapsed ? "px-3 py-2.5" : "px-6 py-2.5",
             "backdrop-blur-sm"
           )}
@@ -363,7 +374,7 @@ export function SidebarNavigation({ className }: SidebarNavigationProps) {
           "w-full justify-start transition-all duration-300 ease-in-out group relative overflow-hidden",
           "rounded-xl border border-transparent bg-gradient-to-r from-background to-muted/20",
           "hover:from-primary/5 hover:to-primary/10 hover:border-primary/20 hover:shadow-lg",
-          "hover:scale-[1.02] active:scale-[0.98]",
+          "hover:scale-[1.04] active:scale-[0.96]",
           isCollapsed ? "px-3 py-2.5" : "px-6 py-2.5",
           "backdrop-blur-sm"
         )}
@@ -391,7 +402,7 @@ export function SidebarNavigation({ className }: SidebarNavigationProps) {
         "w-full justify-start transition-all duration-300 ease-in-out group relative overflow-hidden",
         "rounded-xl border border-transparent bg-gradient-to-r from-background to-muted/20",
         "hover:from-primary/5 hover:to-primary/10 hover:border-primary/20 hover:shadow-lg",
-        "hover:scale-[1.02] active:scale-[0.98]",
+        "hover:scale-[1.04] active:scale-[0.96]",
         isCollapsed ? "px-3 py-2.5" : "px-6 py-2.5",
         "backdrop-blur-sm"
       )}
