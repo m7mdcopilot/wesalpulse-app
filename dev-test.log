@@ -1,0 +1,140 @@
+
+> nextjs_tailwind_shadcn_ts@0.1.0 dev
+> nodemon --exec "npx tsx server.ts" --watch server.ts --watch src --ext ts,tsx,js,jsx 2>&1 | tee dev.log
+
+[33m[nodemon] 3.1.10[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): server.ts src/**/*[39m
+[33m[nodemon] watching extensions: ts,tsx,js,jsx[39m
+[32m[nodemon] starting `npx tsx server.ts`[39m
+> Ready on http://0.0.0.0:3000
+> Socket.IO server running at ws://0.0.0.0:3000/api/socketio
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 711ms (109 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 5.6s (892 modules)
+ GET / 200 in 1477ms
+ ○ Compiling /api/health ...
+ ✓ Compiled /api/health in 1970ms (898 modules)
+ GET /api/health 503 in 2766ms
+ ✓ Compiled /api/call-center-status in 493ms (918 modules)
+ GET /api/auth/me 401 in 628ms
+MongoDB connected successfully
+ ✓ Compiled /api/health/mongodb in 235ms (921 modules)
+✅ MongoDB connected successfully
+ GET / 200 in 221ms
+ GET /api/call-center-status 200 in 3521ms
+ GET /api/health/mongodb 200 in 2063ms
+ GET /api/auth/me 401 in 64ms
+ GET /api/call-center-status 200 in 819ms
+ ⚠ Cross origin request detected from preview-chat-c71d345f-b730-4304-bf27-903fe2fccc4d.space.z.ai to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+ ✓ Compiled /api/dashboard in 402ms (927 modules)
+ GET / 200 in 472ms
+Error getting dashboard analytics: Error: No dashboard data found for company
+    at DataCollectionService.getDashboardAnalytics (src/services/DataCollectionService.ts:225:14)
+    at async DashboardService.getDashboardAnalytics (src/services/DashboardService.ts:406:28)
+    at async getDashboardData (src/app/api/dashboard/route.ts:21:26)
+    at async eval (src/middlewares/error.ts:161:13)
+  223 |       
+  224 |       if (!dashboardData) {
+> 225 |         throw new Error('No dashboard data found for company');
+      |              ^
+  226 |       }
+  227 |
+  228 |       // Get the latest analysis data
+Error getting dashboard analytics: Error: No dashboard data found for company
+    at DataCollectionService.getDashboardAnalytics (src/services/DataCollectionService.ts:225:14)
+    at async DashboardService.getDashboardAnalytics (src/services/DashboardService.ts:406:28)
+    at async getDashboardData (src/app/api/dashboard/route.ts:21:26)
+    at async eval (src/middlewares/error.ts:161:13)
+  223 |       
+  224 |       if (!dashboardData) {
+> 225 |         throw new Error('No dashboard data found for company');
+      |              ^
+  226 |       }
+  227 |
+  228 |       // Get the latest analysis data
+Dashboard API Error: Error: No dashboard data found for company
+    at DataCollectionService.getDashboardAnalytics (src/services/DataCollectionService.ts:225:14)
+    at async DashboardService.getDashboardAnalytics (src/services/DashboardService.ts:406:28)
+    at async getDashboardData (src/app/api/dashboard/route.ts:21:26)
+    at async eval (src/middlewares/error.ts:161:13)
+  223 |       
+  224 |       if (!dashboardData) {
+> 225 |         throw new Error('No dashboard data found for company');
+      |              ^
+  226 |       }
+  227 |
+  228 |       // Get the latest analysis data
+ GET /api/dashboard 500 in 1080ms
+ GET /api/auth/me 401 in 10ms
+ GET /api/call-center-status 200 in 578ms
+ ✓ Compiled /api/seed-demo-data in 353ms (929 modules)
+ POST /api/seed-demo-data 405 in 413ms
+ GET / 200 in 322ms
+ GET /api/auth/me 401 in 10ms
+ GET /api/call-center-status 200 in 578ms
+ GET / 200 in 74ms
+ GET /api/auth/me 401 in 10ms
+ GET /api/call-center-status 200 in 573ms
+ GET / 200 in 70ms
+ GET /api/auth/me 401 in 8ms
+ GET /api/call-center-status 200 in 577ms
+Error getting dashboard analytics: Error: No dashboard data found for company
+    at DataCollectionService.getDashboardAnalytics (src/services/DataCollectionService.ts:225:14)
+    at async DashboardService.getDashboardAnalytics (src/services/DashboardService.ts:406:28)
+    at async getDashboardData (src/app/api/dashboard/route.ts:21:26)
+    at async eval (src/middlewares/error.ts:161:13)
+  223 |       
+  224 |       if (!dashboardData) {
+> 225 |         throw new Error('No dashboard data found for company');
+      |              ^
+  226 |       }
+  227 |
+  228 |       // Get the latest analysis data
+Error getting dashboard analytics: Error: No dashboard data found for company
+    at DataCollectionService.getDashboardAnalytics (src/services/DataCollectionService.ts:225:14)
+    at async DashboardService.getDashboardAnalytics (src/services/DashboardService.ts:406:28)
+    at async getDashboardData (src/app/api/dashboard/route.ts:21:26)
+    at async eval (src/middlewares/error.ts:161:13)
+  223 |       
+  224 |       if (!dashboardData) {
+> 225 |         throw new Error('No dashboard data found for company');
+      |              ^
+  226 |       }
+  227 |
+  228 |       // Get the latest analysis data
+Dashboard API Error: Error: No dashboard data found for company
+    at DataCollectionService.getDashboardAnalytics (src/services/DataCollectionService.ts:225:14)
+    at async DashboardService.getDashboardAnalytics (src/services/DashboardService.ts:406:28)
+    at async getDashboardData (src/app/api/dashboard/route.ts:21:26)
+    at async eval (src/middlewares/error.ts:161:13)
+  223 |       
+  224 |       if (!dashboardData) {
+> 225 |         throw new Error('No dashboard data found for company');
+      |              ^
+  226 |       }
+  227 |
+  228 |       // Get the latest analysis data
+ GET /api/dashboard 500 in 632ms
+ ✓ Compiled /api/call-center-performance in 335ms (926 modules)
+ GET / 200 in 132ms
+ GET /api/call-center-performance 200 in 2020ms
+ GET /api/auth/me 401 in 30ms
+ GET /api/call-center-status 200 in 586ms
+ ✓ Compiled /api/analytics in 237ms (928 modules)
+ GET /api/analytics 200 in 265ms
+ GET / 200 in 148ms
+ GET /api/auth/me 401 in 13ms
+ GET /api/call-center-status 200 in 602ms
+ GET / 200 in 74ms
+ GET /api/auth/me 401 in 12ms
+ GET /api/call-center-status 200 in 578ms
+ GET / 200 in 63ms
+ GET /api/auth/me 401 in 7ms
+ GET /api/call-center-status 200 in 572ms
+ GET / 200 in 71ms
+ GET / 200 in 71ms
+ GET /api/auth/me 401 in 18ms
+ GET /api/call-center-status 200 in 583ms
