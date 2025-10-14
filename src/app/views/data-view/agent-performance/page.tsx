@@ -58,9 +58,12 @@ import {
   RotateCw,
   Building,
   CheckCheck,
-  Circle
+  Circle,
+  Search,
+  Download
 } from 'lucide-react'
 import { SidebarNavigation } from '@/components/sidebar-navigation'
+import { AgentDataTable } from '@/components/agent-management/AgentDataTable'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { DateRangeDialog } from '@/components/dashboard-wrappers/DateRangeDialog'
 import { toast } from 'sonner'
@@ -102,6 +105,22 @@ interface SummaryMetrics {
   hold: number
   transfer: number
   lastUpdated: string
+}
+
+interface ProcessedAgentData {
+  agentId: string
+  agentName: string
+  mediaType: string
+  timeInStatus: number
+  status: 'available' | 'busy' | 'break' | 'offline' | 'training'
+  answeredCalls: number
+  handledCalls: number
+  averageHandleTime: string
+  averageTalkTime: string
+  averageHoldTime: string
+  averageAcwTime: string
+  holdCount: number
+  transferCount: number
 }
 
 const timeRangeOptions = [
@@ -357,7 +376,7 @@ export default function AgentPerformanceAnalytics() {
       case 'voice': return <Phone className="h-3 w-3" />
       case 'chat': return <MessageSquare className="h-3 w-3" />
       case 'email': return <Bell className="h-3 w-3" />
-      case 'callback': return <RotateCcw className="h-3 w-3" />
+      case 'callback': return <RotateCw className="h-3 w-3" />
       default: return <Users className="h-3 w-3" />
     }
   }
