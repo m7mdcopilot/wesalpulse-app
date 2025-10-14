@@ -16,7 +16,6 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DateRangeDialog } from '@/components/dashboard-wrappers/DateRangeDialog'
 import { toast } from 'sonner'
@@ -702,7 +701,6 @@ export default function DataViewQueuePerformance() {
 
   // API data fetching
   const [queueData, setQueueData] = useState<any[]>([])
-  const [loading, setLoading] = useState(false)
 
   const fetchQueueData = async () => {
     setLoading(true)
@@ -902,11 +900,6 @@ export default function DataViewQueuePerformance() {
       { id: 'retention', name: 'Customer Retention', mediaTypes: ['voice'] }
     ])
   }, [])
-
-  const handleRefresh = () => {
-    setLoading(true)
-    setTimeout(() => setLoading(false), 1000)
-  }
 
   const handleMediaTypeToggle = (value: string) => {
     if (value === 'all') {
