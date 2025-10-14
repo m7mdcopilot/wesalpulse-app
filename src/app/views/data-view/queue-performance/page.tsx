@@ -763,6 +763,14 @@ export default function DataViewQueuePerformance() {
     return true
   }, [])
 
+  const applyCustomDateRange = useCallback(() => {
+    if (validateDateRange(customDateRange)) {
+      setShowDateRangeDialog(false)
+      setSelectedTimeRange('custom')
+      toast.success('Custom date range applied successfully')
+    }
+  }, [customDateRange, validateDateRange])
+
   // Date range handlers
   const handleCustomDateRangeChange = (range: {
     startDate: Date | undefined

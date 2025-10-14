@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useCallback, useEffect, useMemo } from 'react'
-import { DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
@@ -371,13 +371,14 @@ export function DateRangeDialog({
   }, [showDateRangeDialog, onDateRangeDialogChange, onDateRangeErrorChange, applyCustomDateRange])
 
   return (
-    <DialogContent 
-      className="max-w-2xl" 
-      aria-modal="true"
-      role="dialog"
-      aria-labelledby="date-range-dialog-title"
-      aria-describedby="date-range-dialog-description"
-    >
+    <Dialog open={showDateRangeDialog} onOpenChange={onDateRangeDialogChange}>
+      <DialogContent 
+        className="max-w-2xl" 
+        aria-modal="true"
+        role="dialog"
+        aria-labelledby="date-range-dialog-title"
+        aria-describedby="date-range-dialog-description"
+      >
       <DialogHeader>
         <DialogTitle 
           id="date-range-dialog-title"
@@ -751,5 +752,6 @@ export function DateRangeDialog({
         </div>
       </div>
     </DialogContent>
+    </Dialog>
   )
 }
