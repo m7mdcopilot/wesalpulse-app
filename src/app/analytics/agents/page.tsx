@@ -486,6 +486,26 @@ export default function AgentPerformanceAnalytics() {
     return `${hours}:${minutes}`
   }
 
+  const getMediaTypeIcon = (mediaType: string) => {
+    switch (mediaType) {
+      case 'voice': return <Phone className="h-3 w-3" />
+      case 'chat': return <MessageSquare className="h-3 w-3" />
+      case 'email': return <Bell className="h-3 w-3" />
+      case 'callback': return <RotateCw className="h-3 w-3" />
+      default: return <Users className="h-3 w-3" />
+    }
+  }
+
+  const getMediaTypeColor = (mediaType: string) => {
+    switch (mediaType) {
+      case 'voice': return 'bg-blue-100 text-blue-800'
+      case 'chat': return 'bg-green-100 text-green-800'
+      case 'email': return 'bg-purple-100 text-purple-800'
+      case 'callback': return 'bg-orange-100 text-orange-800'
+      default: return 'bg-gray-100 text-gray-800'
+    }
+  }
+
   // Widget Management Dialog Content
   const widgetManagementDialogContent = (
     <DialogContent className="max-w-2xl">
@@ -521,6 +541,24 @@ export default function AgentPerformanceAnalytics() {
         </div>
       </div>
     </DialogContent>
+  )
+
+  // Date Range Dialog Content - Using the sophisticated DateRangeDialog component
+  const dateRangeDialogContent = (
+    <DateRangeDialog
+      showDateRangeDialog={showDateRangeDialog}
+      customDateRange={customDateRange}
+      dateRangeError={dateRangeError}
+      selectedTimeRange={selectedTimeRange}
+      onDateRangeDialogChange={setShowDateRangeDialog}
+      onCustomDateRangeChange={handleCustomDateRangeChange}
+      onSelectedTimeRangeChange={setSelectedTimeRange}
+      onDateRangeErrorChange={handleDateRangeErrorChange}
+      onApplyDateRange={handleApplyDateRange}
+      formatTime={formatTime}
+      onFetchDashboardData={handleRefresh}
+      isLoading={loading}
+    />
   )
 
   if (loading) {
@@ -786,11 +824,29 @@ export default function AgentPerformanceAnalytics() {
                     <Button 
                       variant="outline" 
                       size="sm"
-                      onClick={() => setShowDateRangeDialog(true)}
+                      onClick={() => {
+                        setShowDateRangeDialog(true)
+                      }}
                       className="w-full cursor-pointer"
                     >
                       <CalendarIcon className="h-3 w-3 mr-2" />
                       Edit Range
+                    </Button>
+                  </div>
+                )}
+
+                {/* Custom Date Range Picker */}
+                {selectedTimeRange === 'custom' && (!customDateRange.startDate || !customDateRange.endDate) && (
+                  <div className="space-y-4 border-t pt-4">
+                    <Button 
+                      onClick={() => {
+                        setShowDateRangeDialog(true)
+                      }}
+                      className="w-full flex items-center gap-2 cursor-pointer"
+                      variant="outline"
+                    >
+                      <CalendarIcon className="h-4 w-4" />
+                      Configure Date Range
                     </Button>
                   </div>
                 )}
@@ -806,40 +862,22 @@ export default function AgentPerformanceAnalytics() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Select Media Type</label>
-                  <div className="space-y-3">
-                    {/* All Option */}
-                    <Button
-                      variant={selectedMediaTypes.includes('all') ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => handleMediaTypeToggle('all')}
-                      className="w-full justify-start cursor-pointer"
-                    >
-                      <CheckCheck className="h-4 w-4 mr-2" />
-                      All Media Types
-                    </Button>
-                    
-                    {/* Options List */}
-                    <div className="max-h-60 overflow-y-auto space-y-1">
-                      {mediaTypeOptions.map(option => (
-                        <Button
-                          key={option.value}
-                          variant={selectedMediaTypes.includes(option.value) ? "default" : "outline"}
-                          size="sm"
-                          onClick={() => handleMediaTypeToggle(option.value)}
-                          className="w-full justify-start cursor-pointer"
-                        >
-                          <div className="flex items-center gap-2">
-                            {selectedMediaTypes.includes(option.value) ? (
-                              <CheckCircle className="h-4 w-4" />
-                            ) : (
-                              <Circle className="h-4 w-4" />
-                            )}
-                            <span className="text-sm">{option.label}</span>
-                          </div>
-                        </Button>
-                      ))}
-                    </div>
+                  <label className="text-sm font-medium">Select Media Types</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {mediaTypeOptions.map(option => (
+                      <Button
+                        key={option.value}
+                        variant={selectedMediaTypes.includes(option.value) ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => handleMediaTypeToggle(option.value)}
+                        className="justify-start cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2">
+                          {getMediaTypeIcon(option.value)}
+                          {option.label}
+                        </div>
+                      </Button>
+                    ))}
                   </div>
                 </div>
               </CardContent>
@@ -941,13 +979,9 @@ export default function AgentPerformanceAnalytics() {
         )}
 
         {/* Date Range Dialog */}
-        {showDateRangeDialog && (
-          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-            <div className="bg-background rounded-lg p-6 max-w-md w-full mx-4">
-              Date range dialog would go here
-            </div>
-          </div>
-        )}
+        <Dialog open={showDateRangeDialog} onOpenChange={setShowDateRangeDialog}>
+          {dateRangeDialogContent}
+        </Dialog>
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
