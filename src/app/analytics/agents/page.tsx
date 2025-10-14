@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Input } from '@/components/ui/input'
 import {
   BarChart,
   Bar,
@@ -50,11 +51,24 @@ import {
   Settings,
   Maximize,
   Minimize,
-  X
+  X,
+  Bell,
+  Check,
+  RotateCw,
+  Building,
+  CheckCheck,
+  Circle
 } from 'lucide-react'
 import { DashboardLayoutSimple } from '@/components/dashboard-layout-simple'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { AnalyticsFilters } from '@/components/analytics-filters/AnalyticsFilters'
+import { DateRangeDialog } from '@/components/dashboard-wrappers/DateRangeDialog'
+
+interface AgentOption {
+  id: string
+  name: string
+  department: string
+  status: string
+}
 
 interface AgentMetric {
   agentId: string
@@ -96,7 +110,8 @@ const timeRangeOptions = [
   { value: 'this_week', label: 'This Week' },
   { value: 'last_week', label: 'Last Week' },
   { value: 'this_month', label: 'This Month' },
-  { value: 'last_month', label: 'Last Month' }
+  { value: 'last_month', label: 'Last Month' },
+  { value: 'custom', label: 'Custom Range' }
 ]
 
 const statusOptions = [
@@ -120,10 +135,34 @@ export default function AgentPerformanceAnalytics() {
   const [selectedTimeRange, setSelectedTimeRange] = useState('last_24_hours')
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>(['all'])
   const [selectedDepartments, setSelectedDepartments] = useState<string[]>(['all'])
+  const [selectedAgents, setSelectedAgents] = useState<string[]>(['all'])
+  const [agentSearchTerm, setAgentSearchTerm] = useState('')
+  const [availableAgents, setAvailableAgents] = useState<AgentOption[]>([])
   const [loading, setLoading] = useState(true)
   const [showFilters, setShowFilters] = useState(false)
   const [showWidgetDialog, setShowWidgetDialog] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [showDateRangeDialog, setShowDateRangeDialog] = useState(false)
+  const [dateRangeError, setDateRangeError] = useState<string | null>(null)
+  
+  // Custom date range state
+  const [customDateRange, setCustomDateRange] = useState<{
+    startDate: Date | undefined
+    endDate: Date | undefined
+    startTime: string
+    endTime: string
+  }>(() => {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    return {
+      startDate: yesterday,
+      endDate: today,
+      startTime: '00:00',
+      endTime: '23:59'
+    };
+  })
   const [agentMetrics, setAgentMetrics] = useState<AgentMetric[]>([
     {
       agentId: '1',
@@ -254,13 +293,22 @@ export default function AgentPerformanceAnalytics() {
   ])
 
   useEffect(() => {
+    // Initialize available agents
+    setAvailableAgents([
+      { id: 'john', name: 'John Smith', department: 'customer_service', status: 'active' },
+      { id: 'sarah', name: 'Sarah Johnson', department: 'technical_support', status: 'active' },
+      { id: 'mike', name: 'Mike Wilson', department: 'sales', status: 'active' },
+      { id: 'emily', name: 'Emily Davis', department: 'customer_service', status: 'inactive' },
+      { id: 'david', name: 'David Brown', department: 'quality_assurance', status: 'active' }
+    ])
+
     // Simulate data loading
     const timer = setTimeout(() => {
       setLoading(false)
     }, 1000)
 
     return () => clearTimeout(timer)
-  }, [selectedTimeRange, selectedStatuses, selectedDepartments])
+  }, [selectedTimeRange, selectedStatuses, selectedDepartments, selectedAgents])
 
   // Fullscreen handler
   useEffect(() => {
@@ -323,6 +371,30 @@ export default function AgentPerformanceAnalytics() {
     setSelectedTimeRange('last_24_hours')
     setSelectedStatuses(['all'])
     setSelectedDepartments(['all'])
+    setSelectedAgents(['all'])
+    setAgentSearchTerm('')
+    setDateRangeError(null)
+  }
+
+  const handleAgentToggle = (value: string) => {
+    if (value === 'all') {
+      setSelectedAgents(['all'])
+    } else {
+      setSelectedAgents(prev => {
+        const newAgents = prev.filter(agent => agent !== 'all')
+        if (newAgents.includes(value)) {
+          return newAgents.length > 0 ? newAgents.filter(agent => agent !== value) : ['all']
+        } else {
+          return [...newAgents, value]
+        }
+      })
+    }
+  }
+
+  const getFilteredAgents = () => {
+    return availableAgents.filter(agent =>
+      agent.name.toLowerCase().includes(agentSearchTerm.toLowerCase())
+    )
   }
 
   const getStatusColor = (status: string) => {
@@ -357,6 +429,35 @@ export default function AgentPerformanceAnalytics() {
     return selectedDepartments.map(dept => 
       departmentOptions.find(opt => opt.value === dept)?.label || dept
     ).join(', ')
+  }
+
+  const getSelectedAgentsLabel = () => {
+    if (selectedAgents.includes('all')) return 'All Agents'
+    return selectedAgents.map(id => availableAgents.find(a => a.id === id)?.name || id).join(', ')
+  }
+
+  // Date range handlers
+  const handleCustomDateRangeChange = (range: {
+    startDate: Date | undefined
+    endDate: Date | undefined
+    startTime: string
+    endTime: string
+  }) => {
+    setCustomDateRange(range)
+  }
+
+  const handleDateRangeErrorChange = (error: string | null) => {
+    setDateRangeError(error)
+  }
+
+  const handleApplyDateRange = () => {
+    // This will be called when the date range is applied
+    handleRefresh()
+  }
+
+  const formatTime = (time: string) => {
+    const [hours, minutes] = time.split(':')
+    return `${hours}:${minutes}`
   }
 
   // Widget Management Dialog Content
@@ -424,28 +525,464 @@ export default function AgentPerformanceAnalytics() {
 
   return (
     <DashboardLayoutSimple>
-      {/* Analytics Filters Panel */}
-      <AnalyticsFilters
-        showFilters={showFilters}
-        selectedTimeRange={selectedTimeRange}
-        filterOptions={{
-          timeRangeOptions,
-          primaryFilterOptions: statusOptions,
-          secondaryFilterOptions: departmentOptions
-        }}
-        selectedPrimaryFilters={selectedStatuses}
-        selectedSecondaryFilters={selectedDepartments}
-        loading={loading}
-        filterType="agents"
-        onCloseFilters={() => setShowFilters(false)}
-        onTimeRangeChange={setSelectedTimeRange}
-        onPrimaryFilterToggle={handleStatusToggle}
-        onSecondaryFilterToggle={handleDepartmentToggle}
-        onFetchData={handleRefresh}
-        onResetFilters={resetFilters}
-      />
-      
       <div className="space-y-6">
+        {/* Header with Action Buttons */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-3xl font-bold tracking-tight">Agent Performance</h1>
+            <p className="text-muted-foreground">
+              Comprehensive agent performance metrics and analytics
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setShowFilters(!showFilters)}
+              className="cursor-pointer transition-all duration-200 hover:scale-105"
+            >
+              <Filter className="h-4 w-4 mr-2" />
+              {showFilters ? 'Hide' : 'Show'} Filters
+            </Button>
+            <Dialog open={showWidgetDialog} onOpenChange={setShowWidgetDialog}>
+              <DialogTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="cursor-pointer transition-all duration-200 hover:scale-105"
+                >
+                  <Settings className="h-4 w-4 mr-2" />
+                  Widgets
+                </Button>
+              </DialogTrigger>
+              {widgetManagementDialogContent}
+            </Dialog>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={toggleFullscreen}
+              className="cursor-pointer transition-all duration-200 hover:scale-105"
+            >
+              {isFullscreen ? (
+                <>
+                  <Minimize className="h-4 w-4 mr-2" />
+                  Minimize
+                </>
+              ) : (
+                <>
+                  <Maximize className="h-4 w-4 mr-2" />
+                  Full Screen
+                </>
+              )}
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleRefresh}
+              disabled={loading}
+              className="cursor-pointer transition-all duration-200 hover:scale-105 disabled:hover:scale-100"
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+          </div>
+        </div>
+
+        {/* Active Filters Display - Show on top in one line */}
+        <div className="flex flex-wrap gap-2 items-center p-1 mb-1 bg-muted/50 rounded-lg">
+          <span className="text-sm font-bold text-muted-foreground">Active Filters</span>
+          
+          {/* Date Range Section */}
+          <CalendarIcon className="h-4 w-4 ml-2 text-muted-foreground flex-shrink-0" />
+          <span className="text-sm font-medium text-muted-foreground">Date:</span>
+          <Badge variant="secondary">
+            {selectedTimeRange === 'custom' && customDateRange.startDate && customDateRange.endDate ? (
+              <span>
+                {(() => {
+                  const startDateTime = new Date(customDateRange.startDate);
+                  const endDateTime = new Date(customDateRange.endDate);
+                  const [startHour, startMinute, startSecond] = customDateRange.startTime.split(':').map(Number);
+                  const [endHour, endMinute, endSecond] = customDateRange.endTime.split(':').map(Number);
+                  
+                  startDateTime.setHours(startHour, startMinute, startSecond || 0);
+                  endDateTime.setHours(endHour, endMinute, endSecond || 59);
+                  
+                  return `${format(startDateTime, 'MMM dd, yyyy HH:mm:ss')} - ${format(endDateTime, 'MMM dd, yyyy HH:mm:ss')}`;
+                })()}
+              </span>
+            ) : (
+              timeRangeOptions.find(opt => opt.value === selectedTimeRange)?.label || 'Select range'
+            )}
+          </Badge>
+          
+          {/* Status Section */}
+          <User className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+          <span className="text-sm font-medium text-muted-foreground">Status:</span>
+          
+          {/* Individual Status Badges */}
+          {selectedStatuses.includes('all') ? (
+            <Badge variant="secondary">
+              All Status
+            </Badge>
+          ) : (
+            <div className="flex gap-1">
+              {selectedStatuses.map(status => (
+                <Badge key={status} variant="outline" className="bg-blue-100 text-blue-800">
+                  <div className="flex items-center gap-1">
+                    <User className="h-3 w-3" />
+                    {statusOptions.find(opt => opt.value === status)?.label || status}
+                  </div>
+                </Badge>
+              ))}
+            </div>
+          )}
+          
+          {/* Department Section */}
+          <Building className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+          <span className="text-sm font-medium text-muted-foreground">Department:</span>
+          
+          {/* Individual Department Badges */}
+          {selectedDepartments.includes('all') ? (
+            <Badge variant="secondary">
+              All Departments
+            </Badge>
+          ) : (
+            <div className="flex gap-1">
+              {selectedDepartments.map(dept => (
+                <Badge key={dept} variant="outline" className="bg-purple-100 text-purple-800">
+                  <div className="flex items-center gap-1">
+                    <Building className="h-3 w-3" />
+                    {departmentOptions.find(opt => opt.value === dept)?.label || dept}
+                  </div>
+                </Badge>
+              ))}
+            </div>
+          )}
+          
+          {/* Agents Section */}
+          <Users className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+          <span className="text-sm font-medium text-muted-foreground">Agents:</span>
+          
+          {/* Individual Agent Badges */}
+          {selectedAgents.includes('all') ? (
+            <Badge variant="secondary">
+              All Agents
+            </Badge>
+          ) : (
+            <div className="flex gap-1">
+              {selectedAgents.map(agentId => {
+                const agent = availableAgents.find(a => a.id === agentId)
+                return (
+                  <Badge key={agentId} variant="outline" className="bg-gray-100 text-gray-800">
+                    {agent?.name || agentId}
+                  </Badge>
+                )
+              })}
+            </div>
+          )}
+          
+          {/* Reset Filters Button */}
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={resetFilters}
+            className="ml-auto h-6 px-2 text-xs"
+          >
+            <X className="h-3 w-3 mr-1" />
+            Clear
+          </Button>
+        </div>
+        
+        {/* Filter Panel */}
+        <div className={`fixed top-0 right-0 h-full w-80 bg-background border-l border-border transform transition-transform duration-300 ease-in-out z-50 ${showFilters ? 'translate-x-0' : 'translate-x-full'}`}>
+          <div className="p-6 h-full overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold flex items-center gap-2">
+                <Filter className="h-5 w-5" />
+                Filters
+              </h2>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setShowFilters(false)}
+                className="cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <CalendarIcon className="h-5 w-5" />
+                  Time Range
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Select Time Range</label>
+                  <Select value={selectedTimeRange} onValueChange={(value) => {
+                    if (value === 'custom') {
+                      setShowDateRangeDialog(true)
+                    }
+                    setSelectedTimeRange(value)
+                  }}>
+                    <SelectTrigger>
+                      <SelectValue>
+                        {selectedTimeRange === 'custom' && customDateRange.startDate && customDateRange.endDate 
+                          ? `${format(customDateRange.startDate, 'MMM dd, yyyy')} - ${format(customDateRange.endDate, 'MMM dd, yyyy')}`
+                          : timeRangeOptions.find(opt => opt.value === selectedTimeRange)?.label || 'Select range'
+                        }
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {timeRangeOptions.map(option => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Selected Range Details */}
+                {customDateRange.startDate && customDateRange.endDate && (
+                  <div className="space-y-3 border-t pt-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Start:</span>
+                        <span className="font-medium">
+                          {format(customDateRange.startDate, 'MMM dd, yyyy')} at {formatTime(customDateRange.startTime)}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">End:</span>
+                        <span className="font-medium">
+                          {format(customDateRange.endDate, 'MMM dd, yyyy')} at {formatTime(customDateRange.endTime)}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between pt-2 border-t">
+                      <span className="text-xs text-muted-foreground">Duration:</span>
+                      <Badge variant="secondary" className="text-xs">
+                        {(() => {
+                          const startDateTime = new Date(customDateRange.startDate)
+                          const endDateTime = new Date(customDateRange.endDate)
+                          const [startHour, startMinute] = customDateRange.startTime.split(':').map(Number)
+                          const [endHour, endMinute] = customDateRange.endTime.split(':').map(Number)
+                          
+                          startDateTime.setHours(startHour, startMinute, 0, 0)
+                          endDateTime.setHours(endHour, endMinute, 59, 999)
+                          
+                          const durationMs = endDateTime - startDateTime
+                          const durationDays = Math.floor(durationMs / (1000 * 60 * 60 * 24))
+                          const durationHours = Math.floor((durationMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+                          
+                          if (durationDays > 0) {
+                            return `${durationDays} day${durationDays !== 1 ? 's' : ''}${durationHours > 0 ? `, ${durationHours} hr${durationHours !== 1 ? 's' : ''}` : ''}`
+                          } else {
+                            return `${durationHours} hour${durationHours !== 1 ? 's' : ''}`
+                          }
+                        })()}
+                      </Badge>
+                    </div>
+                    
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setShowDateRangeDialog(true)}
+                      className="w-full cursor-pointer"
+                    >
+                      <CalendarIcon className="h-3 w-3 mr-2" />
+                      Edit Range
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <User className="h-5 w-5" />
+                  Status
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Select Status</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {statusOptions.map(option => (
+                      <Button
+                        key={option.value}
+                        variant={selectedStatuses.includes(option.value) ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => handleStatusToggle(option.value)}
+                        className="justify-start cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2">
+                          <User className="h-3 w-3" />
+                          {option.label}
+                        </div>
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Building className="h-5 w-5" />
+                  Department
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Select Department</label>
+                  <div className="space-y-3">
+                    {/* All Option */}
+                    <Button
+                      variant={selectedDepartments.includes('all') ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => handleDepartmentToggle('all')}
+                      className="w-full justify-start cursor-pointer"
+                    >
+                      <CheckCheck className="h-4 w-4 mr-2" />
+                      All Departments
+                    </Button>
+                    
+                    {/* Options List */}
+                    <div className="max-h-60 overflow-y-auto space-y-1">
+                      {departmentOptions.map(option => (
+                        <Button
+                          key={option.value}
+                          variant={selectedDepartments.includes(option.value) ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => handleDepartmentToggle(option.value)}
+                          className="w-full justify-start cursor-pointer"
+                        >
+                          <div className="flex items-center gap-2">
+                            {selectedDepartments.includes(option.value) ? (
+                              <CheckCircle className="h-4 w-4" />
+                            ) : (
+                              <Circle className="h-4 w-4" />
+                            )}
+                            <span className="text-sm">{option.label}</span>
+                          </div>
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  Agents
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Select Agents</label>
+                  <div className="space-y-3">
+                    {/* All Option */}
+                    <Button
+                      variant={selectedAgents.includes('all') ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => handleAgentToggle('all')}
+                      className="w-full justify-start cursor-pointer"
+                    >
+                      <CheckCheck className="h-4 w-4 mr-2" />
+                      All Agents
+                    </Button>
+                    
+                    {/* Search Input */}
+                    <div className="relative">
+                      <Input
+                        placeholder="Search agents..."
+                        value={agentSearchTerm}
+                        onChange={(e) => setAgentSearchTerm(e.target.value)}
+                        className="pr-8"
+                      />
+                      <Filter className="absolute right-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    </div>
+                    
+                    {/* Options List */}
+                    <div className="max-h-60 overflow-y-auto space-y-1">
+                      {getFilteredAgents().map(agent => (
+                        <Button
+                          key={agent.id}
+                          variant={selectedAgents.includes(agent.id) ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => handleAgentToggle(agent.id)}
+                          className="w-full justify-start cursor-pointer"
+                        >
+                          <div className="flex items-center gap-2">
+                            {selectedAgents.includes(agent.id) ? (
+                              <CheckCircle className="h-4 w-4" />
+                            ) : (
+                              <Circle className="h-4 w-4" />
+                            )}
+                            <span className="text-sm">{agent.name}</span>
+                          </div>
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle>Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleRefresh}
+                  disabled={loading}
+                  className="w-full cursor-pointer"
+                >
+                  <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+                  Apply Filters
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={resetFilters}
+                  className="w-full cursor-pointer"
+                >
+                  Reset Filters
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Overlay for mobile */}
+        {showFilters && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+            onClick={() => setShowFilters(false)}
+          />
+        )}
+
+        {/* Date Range Dialog */}
+        {showDateRangeDialog && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+            <div className="bg-background rounded-lg p-6 max-w-md w-full mx-4">
+              Date range dialog would go here
+            </div>
+          </div>
+        )}
         {/* Header with Action Buttons */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="min-w-0 flex-1">
