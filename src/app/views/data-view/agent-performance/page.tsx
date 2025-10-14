@@ -27,13 +27,13 @@ import {
   Area,
   Legend
 } from 'recharts'
-import { 
-  Phone, 
-  MessageSquare, 
-  Mail, 
-  Clock, 
-  Users, 
-  TrendingUp, 
+import {
+  Phone,
+  MessageSquare,
+  Mail,
+  Clock,
+  Users,
+  TrendingUp,
   TrendingDown,
   RefreshCw,
   Calendar as CalendarIcon,
@@ -65,6 +65,8 @@ import {
 import { SidebarNavigation } from '@/components/sidebar-navigation'
 import { AgentDataTable } from '@/components/agent-management/AgentDataTable'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { DashboardLayoutSimple } from '@/components/dashboard-layout-simple'
+
 import { DateRangeDialog } from '@/components/dashboard-wrappers/DateRangeDialog'
 import { toast } from 'sonner'
 
@@ -173,7 +175,7 @@ export default function AgentPerformanceAnalytics() {
   const [showFilters, setShowFilters] = useState(false)
   const [showDateRangeDialog, setShowDateRangeDialog] = useState(false)
   const [dateRangeError, setDateRangeError] = useState<string | null>(null)
-  
+
   // Custom date range state
   const [customDateRange, setCustomDateRange] = useState<{
     startDate: Date | undefined
@@ -232,7 +234,7 @@ export default function AgentPerformanceAnalytics() {
       const end = format(customDateRange.endDate, 'MMM dd, yyyy')
       return `${start} - ${end}`
     }
-    
+
     // For preset ranges, return the label
     const option = timeRangeOptions.find(opt => opt.value === selectedTimeRange)
     return option ? option.label : 'Select range'
@@ -243,12 +245,12 @@ export default function AgentPerformanceAnalytics() {
       setDateRangeError('Please select both start and end dates')
       return false
     }
-    
+
     if (range.startDate > range.endDate) {
       setDateRangeError('Start date must be before end date')
       return false
     }
-    
+
     setDateRangeError(null)
     return true
   }, [])
@@ -274,6 +276,12 @@ export default function AgentPerformanceAnalytics() {
   const handleRefresh = () => {
     setLoading(true)
     setTimeout(() => setLoading(false), 1000)
+  }
+
+
+  const handleApplyAndCloseFilters = () => {
+    handleRefresh()
+    setShowFilters(false)
   }
 
   const handleStatusToggle = (value: string) => {
@@ -393,14 +401,14 @@ export default function AgentPerformanceAnalytics() {
 
   const getSelectedStatusesLabel = () => {
     if (selectedStatuses.includes('all')) return 'All Status'
-    return selectedStatuses.map(status => 
+    return selectedStatuses.map(status =>
       statusOptions.find(opt => opt.value === status)?.label || status
     ).join(', ')
   }
 
   const getSelectedDepartmentsLabel = () => {
     if (selectedDepartments.includes('all')) return 'All Departments'
-    return selectedDepartments.map(dept => 
+    return selectedDepartments.map(dept =>
       departmentOptions.find(opt => opt.value === dept)?.label || dept
     ).join(', ')
   }
@@ -437,11 +445,11 @@ export default function AgentPerformanceAnalytics() {
 
   // Filter data using comprehensive filters
   const filteredData = processedData
-    .filter(agent => 
+    .filter(agent =>
       agent.agentId.toLowerCase().includes(searchTerm.toLowerCase()) ||
       agent.agentName.toLowerCase().includes(searchTerm.toLowerCase())
     )
-    .filter(agent => 
+    .filter(agent =>
       selectedStatuses.includes('all') || selectedStatuses.includes(agent.status)
     )
     .filter(agent => {
@@ -493,19 +501,19 @@ export default function AgentPerformanceAnalytics() {
     acc.breakAgents += agent.status === 'break' ? 1 : 0
     acc.trainingAgents += agent.status === 'training' ? 1 : 0
     acc.offlineAgents += agent.status === 'offline' ? 1 : 0
-    
+
     // Parse time strings to seconds for calculations
     const parseTimeToSeconds = (timeStr: string): number => {
       const [minutes, seconds] = timeStr.split(':').map(Number)
       return minutes * 60 + seconds
     }
-    
+
     acc.totalHandleTime += parseTimeToSeconds(agent.averageHandleTime)
     acc.totalTalkTime += parseTimeToSeconds(agent.averageTalkTime)
     acc.totalHoldTime += parseTimeToSeconds(agent.averageHoldTime)
     acc.totalAcwTime += parseTimeToSeconds(agent.averageAcwTime)
     acc.totalTimeInStatus += agent.timeInStatus
-    
+
     return acc
   }, {
     totalAnswered: 0,
@@ -563,7 +571,7 @@ export default function AgentPerformanceAnalytics() {
     const hours = Math.floor(seconds / 3600)
     const minutes = Math.floor((seconds % 3600) / 60)
     const remainingSeconds = seconds % 60
-    
+
     if (hours > 0) {
       return `${hours}h ${minutes}m`
     } else if (minutes > 0) {
@@ -577,141 +585,433 @@ export default function AgentPerformanceAnalytics() {
     toast.success('Agent performance data exported successfully')
   }
 
-  return (
-    <div className="flex h-screen bg-gray-50">
-      {/* Sidebar Navigation */}
-      <SidebarNavigation />
 
-      {/* Main Content */}
-      <div className="flex-1 overflow-auto">
+  // Date Range Dialog Content - Using the sophisticated DateRangeDialog component
+  const dateRangeDialogContent = (
+    <DateRangeDialog
+      showDateRangeDialog={showDateRangeDialog}
+      customDateRange={customDateRange}
+      dateRangeError={dateRangeError}
+      selectedTimeRange={selectedTimeRange}
+      onDateRangeDialogChange={setShowDateRangeDialog}
+      onCustomDateRangeChange={handleCustomDateRangeChange}
+      onSelectedTimeRangeChange={setSelectedTimeRange}
+      onDateRangeErrorChange={handleDateRangeErrorChange}
+      onApplyDateRange={handleApplyDateRange}
+      formatTime={formatTime}
+      onFetchDashboardData={handleRefresh}
+      isLoading={loading}
+    />
+  )
+
+
+  if (false) {
+    return (
+      <DashboardLayoutSimple>
         <div className="p-6 space-y-6">
-          {/* Header with Action Buttons */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="min-w-0 flex-1">
-              <h1 className="text-3xl font-bold tracking-tight">Agent Performance</h1>
-              <p className="text-muted-foreground">
-                Comprehensive agent performance metrics and analytics
-              </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <Skeleton className="h-8 w-64" />
+              <Skeleton className="h-4 w-96 mt-2" />
             </div>
-            <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => setShowFilters(!showFilters)}
-                className="cursor-pointer transition-all duration-200 hover:scale-105"
-              >
-                <Filter className="h-4 w-4 mr-2" />
-                {showFilters ? 'Hide' : 'Show'} Filters
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleRefresh}
-                disabled={loading}
-                className="cursor-pointer transition-all duration-200 hover:scale-105 disabled:hover:scale-100"
-              >
-                <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-                Refresh
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleExport}
-                className="cursor-pointer transition-all duration-200 hover:scale-105"
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Export
-              </Button>
+            <div className="flex gap-2">
+              <Skeleton className="h-10 w-24" />
+              <Skeleton className="h-10 w-24" />
+              <Skeleton className="h-10 w-24" />
+              <Skeleton className="h-10 w-24" />
             </div>
           </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <Skeleton key={i} className="h-32" />
+            ))}
+          </div>
+        </div>
+      </DashboardLayoutSimple>
+    )
+  }
 
-          {/* Active Filters Display - Show on top in one line */}
-          <div className="flex flex-wrap gap-2 items-center p-1 mb-1 bg-muted/50 rounded-lg">
-            <span className="text-sm font-bold text-muted-foreground">Active Filters</span>
-            
-            {/* Date Range Section */}
-            <CalendarIcon className="h-4 w-4 ml-2 text-muted-foreground flex-shrink-0" />
-            <span className="text-sm font-medium text-muted-foreground">Date:</span>
-            <Badge variant="secondary">
-              {selectedTimeRange === 'custom' && customDateRange.startDate && customDateRange.endDate ? (
-                <span>
-                  {(() => {
-                    const startDateTime = new Date(customDateRange.startDate);
-                    const endDateTime = new Date(customDateRange.endDate);
-                    const [startHour, startMinute, startSecond] = customDateRange.startTime.split(':').map(Number);
-                    const [endHour, endMinute, endSecond] = customDateRange.endTime.split(':').map(Number);
-                    
-                    startDateTime.setHours(startHour, startMinute, startSecond || 0);
-                    endDateTime.setHours(endHour, endMinute, endSecond || 59);
-                    
-                    return `${format(startDateTime, 'MMM dd, yyyy HH:mm')} - ${format(endDateTime, 'MMM dd, yyyy HH:mm')}`
-                  })()}
-                </span>
-              ) : (
-                <span>{timeRangeOptions.find(opt => opt.value === selectedTimeRange)?.label || 'Select range'}</span>
-              )}
-            </Badge>
-            
-            {/* Status Section */}
-            <User className="h-4 w-4 ml-2 text-muted-foreground flex-shrink-0" />
-            <span className="text-sm font-medium text-muted-foreground">Status:</span>
-            <Badge variant="secondary">
-              {getSelectedStatusesLabel()}
-            </Badge>
-            
-            {/* Department Section */}
-            <Building className="h-4 w-4 ml-2 text-muted-foreground flex-shrink-0" />
-            <span className="text-sm font-medium text-muted-foreground">Department:</span>
-            <Badge variant="secondary">
-              {getSelectedDepartmentsLabel()}
-            </Badge>
-            
-            {/* Media Type Section */}
-            <Phone className="h-4 w-4 ml-2 text-muted-foreground flex-shrink-0" />
-            <span className="text-sm font-medium text-muted-foreground">Media:</span>
-            <Badge variant="secondary">
-              {getSelectedMediaTypesLabel()}
-            </Badge>
-            
-            {/* Agent Section */}
-            <Users className="h-4 w-4 ml-2 text-muted-foreground flex-shrink-0" />
-            <span className="text-sm font-medium text-muted-foreground">Agents:</span>
-            <Badge variant="secondary">
-              {getSelectedAgentsLabel()}
-            </Badge>
-            
-            {/* Clear Filters Button */}
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={resetFilters}
-              className="h-6 px-2 text-xs"
+  return (
+    <DashboardLayoutSimple>
+      <div className="space-y-6">
+        {/* Header with Action Buttons */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-3xl font-bold tracking-tight">Agent Performance</h1>
+            <p className="text-muted-foreground">
+              Comprehensive agent performance metrics and analytics
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowFilters(!showFilters)}
+              className="cursor-pointer transition-all duration-200 hover:scale-105"
             >
-              <X className="h-3 w-3 mr-1" />
-              Clear All
+              <Filter className="h-4 w-4 mr-2" />
+              {showFilters ? 'Hide' : 'Show'} Filters
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRefresh}
+              disabled={loading}
+              className="cursor-pointer transition-all duration-200 hover:scale-105 disabled:hover:scale-100"
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+              Refresh
             </Button>
           </div>
-
-          {/* Agent Performance Table */}
-          <AgentDataTable data={transformedAgentData} />
         </div>
-      </div>
 
-      {/* Date Range Dialog - Using the sophisticated DateRangeDialog component */}
-      <DateRangeDialog
-        showDateRangeDialog={showDateRangeDialog}
-        customDateRange={customDateRange}
-        dateRangeError={dateRangeError}
-        selectedTimeRange={selectedTimeRange}
-        onDateRangeDialogChange={setShowDateRangeDialog}
-        onCustomDateRangeChange={handleCustomDateRangeChange}
-        onSelectedTimeRangeChange={setSelectedTimeRange}
-        onDateRangeErrorChange={handleDateRangeErrorChange}
-        onApplyDateRange={handleApplyDateRange}
-        formatTime={formatTime}
-        onFetchDashboardData={handleRefresh}
-        isLoading={loading}
-      />
-    </div>
+        {/* Active Filters Display - Show on top in one line */}
+        <div className="flex flex-wrap gap-2 items-center p-1 mb-1 bg-muted/50 rounded-lg">
+          <span className="text-sm font-bold text-muted-foreground">Active Filters</span>
+
+          {/* Date Range Section */}
+          <CalendarIcon className="h-4 w-4 ml-2 text-muted-foreground flex-shrink-0" />
+          <span className="text-sm font-medium text-muted-foreground">Date:</span>
+          <Badge variant="secondary">
+            {selectedTimeRange === 'custom' && customDateRange.startDate && customDateRange.endDate ? (
+              <span>
+                {(() => {
+                  const startDateTime = new Date(customDateRange.startDate);
+                  const endDateTime = new Date(customDateRange.endDate);
+                  const [startHour, startMinute, startSecond] = customDateRange.startTime.split(':').map(Number);
+                  const [endHour, endMinute, endSecond] = customDateRange.endTime.split(':').map(Number);
+
+                  startDateTime.setHours(startHour, startMinute, startSecond || 0);
+                  endDateTime.setHours(endHour, endMinute, endSecond || 59);
+
+                  return `${format(startDateTime, 'MMM dd, yyyy HH:mm:ss')} - ${format(endDateTime, 'MMM dd, yyyy HH:mm:ss')}`;
+                })()}
+              </span>
+            ) : (
+              timeRangeOptions.find(opt => opt.value === selectedTimeRange)?.label || 'Select range'
+            )}
+          </Badge>
+
+          {/* Media Type Section */}
+          <MessageSquare className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+          <span className="text-sm font-medium text-muted-foreground">Media Type:</span>
+
+          {/* Individual Media Type Badges */}
+          {selectedMediaTypes.includes('all') ? (
+            <Badge variant="secondary">
+              All Media
+            </Badge>
+          ) : (
+            <div className="flex gap-1">
+              {selectedMediaTypes.map(type => (
+                <Badge key={type} variant="outline" className={getMediaTypeColor(type)}>
+                  <div className="flex items-center gap-1">
+                    {getMediaTypeIcon(type)}
+                    {type}
+                  </div>
+                </Badge>
+              ))}
+            </div>
+          )}
+
+          {/* Agents Section */}
+          <Users className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+          <span className="text-sm font-medium text-muted-foreground">Agents:</span>
+
+          {/* Individual Agent Badges */}
+          {selectedAgents.includes('all') ? (
+            <Badge variant="secondary">
+              All Agents
+            </Badge>
+          ) : (
+            <div className="flex gap-1">
+              {selectedAgents.map(agentId => {
+                const agent = availableAgents.find(a => a.id === agentId)
+                return (
+                  <Badge key={agentId} variant="outline" className="bg-gray-100 text-gray-800">
+                    {agent?.name || agentId}
+                  </Badge>
+                )
+              })}
+            </div>
+          )}
+
+          {/* Reset Filters Button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={resetFilters}
+            className="ml-auto h-6 px-2 text-xs"
+          >
+            <X className="h-3 w-3 mr-1" />
+            Clear
+          </Button>
+        </div>
+
+        {/* Filter Panel */}
+        <div className={`fixed top-0 right-0 h-full w-80 bg-background border-l border-border transform transition-transform duration-300 ease-in-out z-50 ${showFilters ? 'translate-x-0' : 'translate-x-full'}`}>
+          <div className="p-6 h-full overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold flex items-center gap-2">
+                <Filter className="h-5 w-5" />
+                Filters
+              </h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowFilters(false)}
+                className="cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <CalendarIcon className="h-5 w-5" />
+                  Time Range
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Select Time Range</label>
+                  <Select value={selectedTimeRange} onValueChange={(value) => {
+                    if (value === 'custom') {
+                      setShowDateRangeDialog(true)
+                    }
+                    setSelectedTimeRange(value)
+                  }}>
+                    <SelectTrigger>
+                      <SelectValue>
+                        {selectedTimeRange === 'custom' && customDateRange.startDate && customDateRange.endDate
+                          ? `${format(customDateRange.startDate, 'MMM dd, yyyy')} - ${format(customDateRange.endDate, 'MMM dd, yyyy')}`
+                          : timeRangeOptions.find(opt => opt.value === selectedTimeRange)?.label || 'Select range'
+                        }
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {timeRangeOptions.map(option => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Selected Range Details */}
+                {customDateRange.startDate && customDateRange.endDate && (
+                  <div className="space-y-3 border-t pt-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Start:</span>
+                        <span className="font-medium">
+                          {format(customDateRange.startDate, 'MMM dd, yyyy')} at {formatTime(customDateRange.startTime)}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">End:</span>
+                        <span className="font-medium">
+                          {format(customDateRange.endDate, 'MMM dd, yyyy')} at {formatTime(customDateRange.endTime)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2 border-t">
+                      <span className="text-xs text-muted-foreground">Duration:</span>
+                      <Badge variant="secondary" className="text-xs">
+                        {(() => {
+                          const startDateTime = new Date(customDateRange.startDate)
+                          const endDateTime = new Date(customDateRange.endDate)
+                          const [startHour, startMinute] = customDateRange.startTime.split(':').map(Number)
+                          const [endHour, endMinute] = customDateRange.endTime.split(':').map(Number)
+
+                          startDateTime.setHours(startHour, startMinute, 0, 0)
+                          endDateTime.setHours(endHour, endMinute, 59, 999)
+
+                          const durationMs = endDateTime - startDateTime
+                          const durationDays = Math.floor(durationMs / (1000 * 60 * 60 * 24))
+                          const durationHours = Math.floor((durationMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+
+                          if (durationDays > 0) {
+                            return `${durationDays} day${durationDays !== 1 ? 's' : ''}${durationHours > 0 ? `, ${durationHours} hr${durationHours !== 1 ? 's' : ''}` : ''}`
+                          } else {
+                            return `${durationHours} hour${durationHours !== 1 ? 's' : ''}`
+                          }
+                        })()}
+                      </Badge>
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setShowDateRangeDialog(true)
+                      }}
+                      className="w-full cursor-pointer"
+                    >
+                      <CalendarIcon className="h-3 w-3 mr-2" />
+                      Edit Range
+                    </Button>
+                  </div>
+                )}
+
+                {/* Custom Date Range Picker */}
+                {selectedTimeRange === 'custom' && (!customDateRange.startDate || !customDateRange.endDate) && (
+                  <div className="space-y-4 border-t pt-4">
+                    <Button
+                      onClick={() => {
+                        setShowDateRangeDialog(true)
+                      }}
+                      className="w-full flex items-center gap-2 cursor-pointer"
+                      variant="outline"
+                    >
+                      <CalendarIcon className="h-4 w-4" />
+                      Configure Date Range
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MessageSquare className="h-5 w-5" />
+                  Media Type
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Select Media Types</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {mediaTypeOptions.map(option => (
+                      <Button
+                        key={option.value}
+                        variant={selectedMediaTypes.includes(option.value) ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => handleMediaTypeToggle(option.value)}
+                        className="justify-start cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2">
+                          {getMediaTypeIcon(option.value)}
+                          {option.label}
+                        </div>
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  Agents
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Select Agents</label>
+                  <div className="space-y-3">
+                    {/* All Option */}
+                    <Button
+                      variant={selectedAgents.includes('all') ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => handleAgentToggle('all')}
+                      className="w-full justify-start cursor-pointer"
+                    >
+                      <CheckCheck className="h-4 w-4 mr-2" />
+                      All Agents
+                    </Button>
+
+                    {/* Search Input */}
+                    <div className="relative">
+                      <Input
+                        placeholder="Search agents..."
+                        value={agentSearchTerm}
+                        onChange={(e) => setAgentSearchTerm(e.target.value)}
+                        className="pr-8"
+                      />
+                      <Filter className="absolute right-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    </div>
+
+                    {/* Options List */}
+                    <div className="max-h-60 overflow-y-auto space-y-1">
+                      {getFilteredAgents().map(agent => (
+                        <Button
+                          key={agent.id}
+                          variant={selectedAgents.includes(agent.id) ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => handleAgentToggle(agent.id)}
+                          className="w-full justify-start cursor-pointer"
+                        >
+                          <div className="flex items-center gap-2">
+                            {selectedAgents.includes(agent.id) ? (
+                              <CheckCircle className="h-4 w-4" />
+                            ) : (
+                              <Circle className="h-4 w-4" />
+                            )}
+                            <span className="text-sm">{agent.name}</span>
+                          </div>
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle>Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleApplyAndCloseFilters}
+                  disabled={loading}
+                  className="w-full cursor-pointer"
+                >
+                  <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+                  Apply Filters
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={resetFilters}
+                  className="w-full cursor-pointer"
+                >
+                  Reset Filters
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Overlay for mobile */}
+        {showFilters && (
+          <div
+            className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+            onClick={() => setShowFilters(false)}
+          />
+        )}
+
+        {/* Date Range Dialog */}
+        <Dialog open={showDateRangeDialog} onOpenChange={setShowDateRangeDialog}>
+          {dateRangeDialogContent}
+        </Dialog>
+
+
+
+        {/* Agent Performance Table */}
+        <AgentDataTable data={transformedAgentData} />
+
+
+      </div>
+    </DashboardLayoutSimple>
   )
 }
