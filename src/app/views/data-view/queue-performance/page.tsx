@@ -1049,6 +1049,12 @@ export default function DataViewQueuePerformance() {
               <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
               Refresh
             </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={loading}
+              className="cursor-pointer transition-all duration-200 hover:scale-105"
+            > <Download className="h-4 w-4 mr-2" /> Export</Button>
           </div>
         </div>
 

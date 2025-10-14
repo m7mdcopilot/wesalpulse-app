@@ -114,7 +114,7 @@ function ProfileContent() {
             {/* Navigation */}
             <nav className="space-y-2">
               <Link 
-                href="/dashboard" 
+                href="/" 
                 className="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200 cursor-pointer"
               >
                 <LayoutDashboard className="h-4 w-4" />
@@ -248,24 +248,6 @@ function ProfileContent() {
                         <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
                           <Calendar className="h-4 w-4 text-gray-400" />
                           <span className="text-gray-900">{new Date(userData.joinDate).toLocaleDateString()}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Allowed Divisions */}
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-gray-700">Allowed Divisions</Label>
-                      <div className="flex items-start gap-2 p-3 bg-gray-50 rounded-lg">
-                        <Shield className="h-4 w-4 text-gray-400 mt-0.5" />
-                        <div className="flex flex-wrap gap-2">
-                          {userData.allowedDivisions.map((division, index) => (
-                            <span 
-                              key={index}
-                              className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#00234B] text-white"
-                            >
-                              {division}
-                            </span>
-                          ))}
                         </div>
                       </div>
                     </div>

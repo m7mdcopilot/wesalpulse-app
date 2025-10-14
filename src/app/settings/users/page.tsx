@@ -39,7 +39,6 @@ interface User {
   phoneNumber: string
   department: string
   role: 'admin' | 'supervisor' | 'user'
-  allowedDivisions: string[]
   status: 'active' | 'disabled'
   joinDate: string
 }
@@ -53,7 +52,6 @@ export default function SettingsUsers() {
       phoneNumber: '+1 (555) 123-4567',
       department: 'Customer Service',
       role: 'admin',
-      allowedDivisions: ['Sales', 'Support', 'Billing'],
       status: 'active',
       joinDate: '2023-01-15'
     },
@@ -64,7 +62,6 @@ export default function SettingsUsers() {
       phoneNumber: '+1 (555) 234-5678',
       department: 'Sales',
       role: 'supervisor',
-      allowedDivisions: ['Sales', 'Marketing'],
       status: 'active',
       joinDate: '2023-02-20'
     },
@@ -75,109 +72,10 @@ export default function SettingsUsers() {
       phoneNumber: '+1 (555) 345-6789',
       department: 'Support',
       role: 'user',
-      allowedDivisions: ['Support'],
       status: 'disabled',
       joinDate: '2023-03-10'
-    },
-    {
-      id: '4',
-      fullName: 'Sarah Wilson',
-      emailAddress: 'sarah.wilson@example.com',
-      phoneNumber: '+1 (555) 456-7890',
-      department: 'Billing',
-      role: 'supervisor',
-      allowedDivisions: ['Billing', 'Finance'],
-      status: 'active',
-      joinDate: '2023-04-05'
-    },
-    {
-      id: '5',
-      fullName: 'David Brown',
-      emailAddress: 'david.brown@example.com',
-      phoneNumber: '+1 (555) 567-8901',
-      department: 'Marketing',
-      role: 'user',
-      allowedDivisions: ['Marketing', 'Sales'],
-      status: 'active',
-      joinDate: '2023-05-12'
-    },
-    {
-      id: '6',
-      fullName: 'Emily Davis',
-      emailAddress: 'emily.davis@example.com',
-      phoneNumber: '+1 (555) 678-9012',
-      department: 'IT',
-      role: 'admin',
-      allowedDivisions: ['IT', 'Support', 'Operations'],
-      status: 'active',
-      joinDate: '2023-06-18'
-    },
-    {
-      id: '7',
-      fullName: 'Robert Miller',
-      emailAddress: 'robert.miller@example.com',
-      phoneNumber: '+1 (555) 789-0123',
-      department: 'HR',
-      role: 'supervisor',
-      allowedDivisions: ['HR', 'Operations'],
-      status: 'active',
-      joinDate: '2023-07-22'
-    },
-    {
-      id: '8',
-      fullName: 'Lisa Anderson',
-      emailAddress: 'lisa.anderson@example.com',
-      phoneNumber: '+1 (555) 890-1234',
-      department: 'Operations',
-      role: 'user',
-      allowedDivisions: ['Operations'],
-      status: 'disabled',
-      joinDate: '2023-08-30'
-    },
-    {
-      id: '9',
-      fullName: 'James Taylor',
-      emailAddress: 'james.taylor@example.com',
-      phoneNumber: '+1 (555) 901-2345',
-      department: 'Customer Service',
-      role: 'user',
-      allowedDivisions: ['Customer Service', 'Support'],
-      status: 'active',
-      joinDate: '2023-09-14'
-    },
-    {
-      id: '10',
-      fullName: 'Jennifer White',
-      emailAddress: 'jennifer.white@example.com',
-      phoneNumber: '+1 (555) 012-3456',
-      department: 'Sales',
-      role: 'user',
-      allowedDivisions: ['Sales'],
-      status: 'active',
-      joinDate: '2023-10-08'
-    },
-    {
-      id: '11',
-      fullName: 'Michael Garcia',
-      emailAddress: 'michael.garcia@example.com',
-      phoneNumber: '+1 (555) 123-4567',
-      department: 'Support',
-      role: 'supervisor',
-      allowedDivisions: ['Support', 'IT'],
-      status: 'active',
-      joinDate: '2023-11-15'
-    },
-    {
-      id: '12',
-      fullName: 'Amanda Martinez',
-      emailAddress: 'amanda.martinez@example.com',
-      phoneNumber: '+1 (555) 234-5678',
-      department: 'Billing',
-      role: 'user',
-      allowedDivisions: ['Billing'],
-      status: 'disabled',
-      joinDate: '2023-12-01'
     }
+    
   ])
 
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -188,8 +86,7 @@ export default function SettingsUsers() {
     emailAddress: '',
     phoneNumber: '',
     department: '',
-    role: 'user' as 'admin' | 'supervisor' | 'user',
-    allowedDivisions: [] as string[]
+    role: 'user' as 'admin' | 'supervisor' | 'user'
   })
 
   // Confirmation dialog states
@@ -205,7 +102,6 @@ export default function SettingsUsers() {
   const [itemsPerPage] = useState(10)
 
   const departments = ['Customer Service', 'Sales', 'Support', 'Billing', 'Marketing', 'IT', 'HR']
-  const divisions = ['Sales', 'Support', 'Billing', 'Marketing', 'IT', 'HR', 'Operations']
 
   const filteredUsers = users.filter(user =>
     user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -263,7 +159,6 @@ export default function SettingsUsers() {
       phoneNumber: user.phoneNumber,
       department: user.department,
       role: user.role,
-      allowedDivisions: user.allowedDivisions
     })
     setIsDialogOpen(true)
   }
@@ -328,19 +223,10 @@ export default function SettingsUsers() {
       phoneNumber: '',
       department: '',
       role: 'user',
-      allowedDivisions: []
     })
     setEditingUser(null)
   }
 
-  const handleDivisionToggle = (division: string) => {
-    setFormData(prev => ({
-      ...prev,
-      allowedDivisions: prev.allowedDivisions.includes(division)
-        ? prev.allowedDivisions.filter(d => d !== division)
-        : [...prev.allowedDivisions, division]
-    }))
-  }
 
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
@@ -453,21 +339,7 @@ export default function SettingsUsers() {
                 </Select>
               </div>
 
-              <div className="space-y-2">
-                <Label>Allowed Divisions</Label>
-                <div className="space-y-2">
-                  {divisions.map(division => (
-                    <div key={division} className="flex items-center space-x-2">
-                      <Switch
-                        id={division}
-                        checked={formData.allowedDivisions.includes(division)}
-                        onCheckedChange={() => handleDivisionToggle(division)}
-                      />
-                      <Label htmlFor={division} className="text-sm">{division}</Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              
             </div>
 
             <DialogFooter className="flex flex-col sm:flex-row gap-2">
@@ -525,7 +397,6 @@ export default function SettingsUsers() {
                   <TableHead>Contact</TableHead>
                   <TableHead>Department</TableHead>
                   <TableHead>Role</TableHead>
-                  <TableHead>Divisions</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -567,20 +438,7 @@ export default function SettingsUsers() {
                         {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                       </Badge>
                     </TableCell>
-                    <TableCell>
-                      <div className="flex flex-wrap gap-1">
-                        {user.allowedDivisions.slice(0, 2).map(division => (
-                          <Badge key={division} variant="outline" className="text-xs">
-                            {division}
-                          </Badge>
-                        ))}
-                        {user.allowedDivisions.length > 2 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{user.allowedDivisions.length - 2}
-                          </Badge>
-                        )}
-                      </div>
-                    </TableCell>
+                    
                     <TableCell>
                       <Badge variant="secondary" className={getStatusBadgeColor(user.status)}>
                         {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
