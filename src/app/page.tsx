@@ -321,7 +321,7 @@ export default function Home() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-2xl font-bold text-green-600">Waiting Calls</p>
-                      <p className="text-8xl font-black text-green-800">{Math.floor(Math.random() * 15) + 5}</p>
+                      <p className="text-8xl font-black text-green-800">{callCenterStatusToday.currentCallStatus.activeCalls > 0 ? Math.floor(callCenterStatusToday.currentCallStatus.activeCalls * 0.3) + 5 : 12}</p>
                       <p className="text-lg text-green-600">customers currently in queue</p>
                     </div>
                     <Phone className="h-18 w-18 text-green-600" />
@@ -423,7 +423,7 @@ export default function Home() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-2xl font-bold text-muted-foreground">Average Waiting Time</p>
-                      <p className="text-8xl font-black">{Math.floor(Math.random() * 120) + 30}s</p>
+                      <p className="text-8xl font-black">{callHandlingMetrics.averageHandleTime}</p>
                       <p className="text-lg text-muted-foreground">per call</p>
                     </div>
                     <Clock className="h-[50px] w-[50px] text-muted-foreground" />
@@ -447,7 +447,7 @@ export default function Home() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-2xl font-bold text-muted-foreground">Met Service Level</p>
-                      <p className="text-8xl font-black">{Math.floor(Math.random() * 30) + 70}%</p>
+                      <p className="text-8xl font-black">{callHandlingMetrics.metServiceLevel}</p>
                       <p className="text-lg text-muted-foreground">calls answered within SLA</p>
                     </div>
                     <CheckCircle className="h-[50px] w-[50px] text-muted-foreground" />
@@ -459,7 +459,7 @@ export default function Home() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-2xl font-bold text-muted-foreground">Service Level</p>
-                      <p className="text-8xl font-black">{Math.floor(Math.random() * 20) + 75}%</p>
+                      <p className="text-8xl font-black">{callHandlingMetrics.serviceLevel}</p>
                       <p className="text-lg text-muted-foreground">target achieved</p>
                     </div>
                     <CheckCircle className="h-[50px] w-[50px] text-muted-foreground" />
