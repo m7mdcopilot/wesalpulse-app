@@ -970,24 +970,6 @@ export default function DataViewQueuePerformance() {
     setDateRangeError(null)
   }
 
-  // Date range handlers
-  const handleCustomDateRangeChange = (range: {
-    startDate: Date | undefined
-    endDate: Date | undefined
-    startTime: string
-    endTime: string
-  }) => {
-    setCustomDateRange(range)
-  }
-
-  const handleDateRangeErrorChange = (error: string | null) => {
-    setDateRangeError(error)
-  }
-
-  const handleApplyDateRange = () => {
-    handleRefresh()
-  }
-
   const getMediaTypeIcon = (mediaType: string) => {
     switch (mediaType) {
       case 'voice': return <Phone className="h-3 w-3" />
