@@ -50,13 +50,8 @@ import {
   Award,
   ArrowRight,
   ChevronDown,
-  Settings,
-  Maximize,
-  Minimize,
-  X,
   Bell,
   Check,
-  User,
   RotateCw,
   Building
 } from 'lucide-react'
@@ -142,8 +137,6 @@ export default function QueuesPerformance() {
   const [availableQueues, setAvailableQueues] = useState<QueueOption[]>([])
   const [loading, setLoading] = useState(true)
   const [showFilters, setShowFilters] = useState(false)
-  const [showWidgetDialog, setShowWidgetDialog] = useState(false)
-  const [isFullscreen, setIsFullscreen] = useState(false)
   const [showDateRangeDialog, setShowDateRangeDialog] = useState(false)
   const [dateRangeError, setDateRangeError] = useState<string | null>(null)
   
@@ -314,28 +307,6 @@ export default function QueuesPerformance() {
     return () => clearTimeout(timer)
   }, [selectedTimeRange, selectedMediaTypes, selectedQueues])
 
-  // Fullscreen handler
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement)
-    }
-
-    document.addEventListener('fullscreenchange', handleFullscreenChange)
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange)
-  }, [])
-
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(err => {
-        console.error(`Error attempting to enable fullscreen: ${err.message}`)
-      })
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen()
-      }
-    }
-  }
-
   const handleRefresh = () => {
     setLoading(true)
     setTimeout(() => setLoading(false), 1000)
@@ -482,43 +453,6 @@ export default function QueuesPerformance() {
     ASA: queue.asa
   }))
 
-  // Widget Management Dialog Content
-  const widgetManagementDialogContent = (
-    <DialogContent className="max-w-2xl">
-      <DialogHeader>
-        <DialogTitle>Manage Widgets</DialogTitle>
-      </DialogHeader>
-      <div className="space-y-4">
-        <div className="text-sm text-muted-foreground">
-          Configure which widgets and metrics are displayed on your dashboard.
-        </div>
-        <div className="space-y-3">
-          <div className="flex items-center justify-between p-3 border rounded-lg">
-            <div>
-              <h4 className="font-medium">Summary Cards</h4>
-              <p className="text-sm text-muted-foreground">Key performance metrics overview</p>
-            </div>
-            <Button variant="outline" size="sm">Configure</Button>
-          </div>
-          <div className="flex items-center justify-between p-3 border rounded-lg">
-            <div>
-              <h4 className="font-medium">Performance Charts</h4>
-              <p className="text-sm text-muted-foreground">Interactive charts and trends</p>
-            </div>
-            <Button variant="outline" size="sm">Configure</Button>
-          </div>
-          <div className="flex items-center justify-between p-3 border rounded-lg">
-            <div>
-              <h4 className="font-medium">Queue Details</h4>
-              <p className="text-sm text-muted-foreground">Detailed queue metrics table</p>
-            </div>
-            <Button variant="outline" size="sm">Configure</Button>
-          </div>
-        </div>
-      </div>
-    </DialogContent>
-  )
-
   // Date Range Dialog Content - Using the sophisticated DateRangeDialog component
   const dateRangeDialogContent = (
     <DateRangeDialog
@@ -583,37 +517,6 @@ export default function QueuesPerformance() {
             >
               <Filter className="h-4 w-4 mr-2" />
               {showFilters ? 'Hide' : 'Show'} Filters
-            </Button>
-            <Dialog open={showWidgetDialog} onOpenChange={setShowWidgetDialog}>
-              <DialogTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="cursor-pointer transition-all duration-200 hover:scale-105"
-                >
-                  <Settings className="h-4 w-4 mr-2" />
-                  Widgets
-                </Button>
-              </DialogTrigger>
-              {widgetManagementDialogContent}
-            </Dialog>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={toggleFullscreen}
-              className="cursor-pointer transition-all duration-200 hover:scale-105"
-            >
-              {isFullscreen ? (
-                <>
-                  <Minimize className="h-4 w-4 mr-2" />
-                  Minimize
-                </>
-              ) : (
-                <>
-                  <Maximize className="h-4 w-4 mr-2" />
-                  Full Screen
-                </>
-              )}
             </Button>
             <Button 
               variant="outline" 

@@ -131,7 +131,7 @@ const departmentOptions = [
 ]
 
 const mediaTypeOptions = [
-  { value: 'all', label: 'Media Type' },
+  { value: 'all', label: 'All Media' },
   { value: 'voice', label: 'Voice' },
   { value: 'chat', label: 'Chat' },
   { value: 'email', label: 'Email' },
