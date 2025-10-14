@@ -1882,3 +1882,4 @@ Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allow
  GET / 200 in 64ms
  GET /api/auth/me 401 in 15ms
  GET /api/call-center-status 200 in 585ms
+ GET / 200 in 60ms
