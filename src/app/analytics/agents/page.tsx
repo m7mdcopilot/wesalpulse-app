@@ -130,6 +130,14 @@ const departmentOptions = [
   { value: 'quality_assurance', label: 'Quality Assurance' }
 ]
 
+const mediaTypeOptions = [
+  { value: 'all', label: 'All Media Types' },
+  { value: 'voice', label: 'Voice' },
+  { value: 'chat', label: 'Chat' },
+  { value: 'email', label: 'Email' },
+  { value: 'callback', label: 'Callback' }
+]
+
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D']
 
 export default function AgentPerformanceAnalytics() {
@@ -137,6 +145,7 @@ export default function AgentPerformanceAnalytics() {
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>(['all'])
   const [selectedDepartments, setSelectedDepartments] = useState<string[]>(['all'])
   const [selectedAgents, setSelectedAgents] = useState<string[]>(['all'])
+  const [selectedMediaTypes, setSelectedMediaTypes] = useState<string[]>(['all'])
   const [agentSearchTerm, setAgentSearchTerm] = useState('')
   const [availableAgents, setAvailableAgents] = useState<AgentOption[]>([])
   const [loading, setLoading] = useState(true)
@@ -368,11 +377,27 @@ export default function AgentPerformanceAnalytics() {
     }
   }
 
+  const handleMediaTypeToggle = (value: string) => {
+    if (value === 'all') {
+      setSelectedMediaTypes(['all'])
+    } else {
+      setSelectedMediaTypes(prev => {
+        const newMediaTypes = prev.filter(type => type !== 'all')
+        if (newMediaTypes.includes(value)) {
+          return newMediaTypes.length > 0 ? newMediaTypes.filter(type => type !== value) : ['all']
+        } else {
+          return [...newMediaTypes, value]
+        }
+      })
+    }
+  }
+
   const resetFilters = () => {
     setSelectedTimeRange('last_24_hours')
     setSelectedStatuses(['all'])
     setSelectedDepartments(['all'])
     setSelectedAgents(['all'])
+    setSelectedMediaTypes(['all'])
     setAgentSearchTerm('')
     setDateRangeError(null)
   }
@@ -544,37 +569,6 @@ export default function AgentPerformanceAnalytics() {
             >
               <Filter className="h-4 w-4 mr-2" />
               {showFilters ? 'Hide' : 'Show'} Filters
-            </Button>
-            <Dialog open={showWidgetDialog} onOpenChange={setShowWidgetDialog}>
-              <DialogTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="cursor-pointer transition-all duration-200 hover:scale-105"
-                >
-                  <Settings className="h-4 w-4 mr-2" />
-                  Widgets
-                </Button>
-              </DialogTrigger>
-              {widgetManagementDialogContent}
-            </Dialog>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={toggleFullscreen}
-              className="cursor-pointer transition-all duration-200 hover:scale-105"
-            >
-              {isFullscreen ? (
-                <>
-                  <Minimize className="h-4 w-4 mr-2" />
-                  Minimize
-                </>
-              ) : (
-                <>
-                  <Maximize className="h-4 w-4 mr-2" />
-                  Full Screen
-                </>
-              )}
             </Button>
             <Button 
               variant="outline" 
@@ -806,67 +800,37 @@ export default function AgentPerformanceAnalytics() {
             <Card className="mt-6">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <User className="h-5 w-5" />
-                  Status
+                  <MessageSquare className="h-5 w-5" />
+                  Media Type
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Select Status</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {statusOptions.map(option => (
-                      <Button
-                        key={option.value}
-                        variant={selectedStatuses.includes(option.value) ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => handleStatusToggle(option.value)}
-                        className="justify-start cursor-pointer"
-                      >
-                        <div className="flex items-center gap-2">
-                          <User className="h-3 w-3" />
-                          {option.label}
-                        </div>
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="mt-6">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Building className="h-5 w-5" />
-                  Department
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Select Department</label>
+                  <label className="text-sm font-medium">Select Media Type</label>
                   <div className="space-y-3">
                     {/* All Option */}
                     <Button
-                      variant={selectedDepartments.includes('all') ? "default" : "outline"}
+                      variant={selectedMediaTypes.includes('all') ? "default" : "outline"}
                       size="sm"
-                      onClick={() => handleDepartmentToggle('all')}
+                      onClick={() => handleMediaTypeToggle('all')}
                       className="w-full justify-start cursor-pointer"
                     >
                       <CheckCheck className="h-4 w-4 mr-2" />
-                      All Departments
+                      All Media Types
                     </Button>
                     
                     {/* Options List */}
                     <div className="max-h-60 overflow-y-auto space-y-1">
-                      {departmentOptions.map(option => (
+                      {mediaTypeOptions.map(option => (
                         <Button
                           key={option.value}
-                          variant={selectedDepartments.includes(option.value) ? "default" : "outline"}
+                          variant={selectedMediaTypes.includes(option.value) ? "default" : "outline"}
                           size="sm"
-                          onClick={() => handleDepartmentToggle(option.value)}
+                          onClick={() => handleMediaTypeToggle(option.value)}
                           className="w-full justify-start cursor-pointer"
                         >
                           <div className="flex items-center gap-2">
-                            {selectedDepartments.includes(option.value) ? (
+                            {selectedMediaTypes.includes(option.value) ? (
                               <CheckCircle className="h-4 w-4" />
                             ) : (
                               <Circle className="h-4 w-4" />
@@ -984,135 +948,6 @@ export default function AgentPerformanceAnalytics() {
             </div>
           </div>
         )}
-        {/* Header with Action Buttons */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="min-w-0 flex-1">
-            <h1 className="text-3xl font-bold tracking-tight">Agent Performance</h1>
-            <p className="text-muted-foreground">
-              Comprehensive agent performance metrics and analytics
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => setShowFilters(!showFilters)}
-              className="cursor-pointer transition-all duration-200 hover:scale-105"
-            >
-              <Filter className="h-4 w-4 mr-2" />
-              {showFilters ? 'Hide' : 'Show'} Filters
-            </Button>
-            <Dialog open={showWidgetDialog} onOpenChange={setShowWidgetDialog}>
-              <DialogTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="cursor-pointer transition-all duration-200 hover:scale-105"
-                >
-                  <Settings className="h-4 w-4 mr-2" />
-                  Widgets
-                </Button>
-              </DialogTrigger>
-              {widgetManagementDialogContent}
-            </Dialog>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={toggleFullscreen}
-              className="cursor-pointer transition-all duration-200 hover:scale-105"
-            >
-              {isFullscreen ? (
-                <>
-                  <Minimize className="h-4 w-4 mr-2" />
-                  Minimize
-                </>
-              ) : (
-                <>
-                  <Maximize className="h-4 w-4 mr-2" />
-                  Full Screen
-                </>
-              )}
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={handleRefresh}
-              disabled={loading}
-              className="cursor-pointer transition-all duration-200 hover:scale-105 disabled:hover:scale-100"
-            >
-              <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-              Refresh
-            </Button>
-          </div>
-        </div>
-
-        {/* Active Filters Display */}
-        <Card className="bg-muted/30">
-          <CardContent className="p-4">
-            <div className="flex flex-col space-y-3">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-muted-foreground">Active Filters</h3>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={resetFilters}
-                  className="h-6 px-2 text-xs"
-                >
-                  Clear All
-                </Button>
-              </div>
-              
-              <div className="flex flex-wrap gap-2 items-center">
-                {/* Date Range Section */}
-                <div className="flex items-center gap-2">
-                  <CalendarIcon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                  <span className="text-sm font-medium text-muted-foreground">Date:</span>
-                  <Badge variant="secondary">
-                    {timeRangeOptions.find(opt => opt.value === selectedTimeRange)?.label || 'Select range'}
-                  </Badge>
-                </div>
-                
-                {/* Status Section */}
-                <div className="flex items-center gap-2">
-                  <User className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                  <span className="text-sm font-medium text-muted-foreground">Status:</span>
-                  {selectedStatuses.includes('all') ? (
-                    <Badge variant="secondary">
-                      All Status
-                    </Badge>
-                  ) : (
-                    <div className="flex gap-1">
-                      {selectedStatuses.map(status => (
-                        <Badge key={status} variant="outline" className="bg-blue-100 text-blue-800">
-                          {statusOptions.find(opt => opt.value === status)?.label || status}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                
-                {/* Department Section */}
-                <div className="flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                  <span className="text-sm font-medium text-muted-foreground">Department:</span>
-                  {selectedDepartments.includes('all') ? (
-                    <Badge variant="secondary">
-                      All Departments
-                    </Badge>
-                  ) : (
-                    <div className="flex gap-1">
-                      {selectedDepartments.map(dept => (
-                        <Badge key={dept} variant="outline" className="bg-green-100 text-green-800">
-                          {departmentOptions.find(opt => opt.value === dept)?.label || dept}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
