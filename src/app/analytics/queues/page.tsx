@@ -50,6 +50,7 @@ import {
   Award,
   ArrowRight,
   ChevronDown,
+  X,
   Bell,
   Check,
   RotateCw,
