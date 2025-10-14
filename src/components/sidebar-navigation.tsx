@@ -170,6 +170,7 @@ export function SidebarNavigation({ className }: SidebarNavigationProps) {
       id: 'analytics',
       label: 'Analytics',
       icon: <TrendingUp className="h-5 w-5" />,
+      href: '/analytics/queues',
       badge: 'New',
       children: [
         {
@@ -190,6 +191,7 @@ export function SidebarNavigation({ className }: SidebarNavigationProps) {
       id: 'data-view',
       label: 'Data View',
       icon: <Database className="h-5 w-5" />,
+      href: '/views/data-view/queue-performance',
       children: [
         {
           id: 'queue-performance',
@@ -236,7 +238,14 @@ export function SidebarNavigation({ className }: SidebarNavigationProps) {
               isCollapsed ? "px-3 py-3" : "px-4 py-3",
               "backdrop-blur-sm"
             )}
-            onClick={() => toggleSubmenu(item.id)}
+            onClick={() => {
+              // Toggle submenu
+              toggleSubmenu(item.id)
+              // Navigate if href exists
+              if (item.href) {
+                window.location.href = item.href
+              }
+            }}
           >
             <div className="flex items-center justify-center w-6 h-6 text-primary group-hover:text-primary transition-colors">
               {item.icon}
@@ -289,7 +298,14 @@ export function SidebarNavigation({ className }: SidebarNavigationProps) {
             "px-3 py-3",
             "backdrop-blur-sm"
           )}
-          onClick={() => toggleSubmenu(item.id)}
+          onClick={() => {
+          // Toggle submenu
+          toggleSubmenu(item.id)
+          // Navigate if href exists
+          if (item.href) {
+            window.location.href = item.href
+          }
+        }}
           title={item.label}
         >
           <div className="flex items-center justify-center w-6 h-6 text-primary group-hover:text-primary transition-colors">
