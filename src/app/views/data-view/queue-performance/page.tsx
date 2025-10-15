@@ -888,74 +888,85 @@ export default function DataViewQueuePerformance() {
   }
 
   const handleExportData = () => {
-    // Create CSV content from processedData
-    const headers = [
-      'Queue ID',
-      'Queue Name',
-      'Media Type',
-      'Total Calls',
-      'Connected Calls',
-      'Error Calls',
-      'Offered Calls',
-      'Abandoned Calls',
-      'Transferred Calls',
-      'Average Handle Time',
-      'Average Talk Time',
-      'Average Wait Time',
-      'Average Hold Time',
-      'Average ACW Time',
-      'Service Level (%)',
-      'Service Level Target (%)',
-      'Over SLA',
-      'Utilization (%)',
-      'Status',
-      'Answer Rate (%)',
-      'Abandon Rate (%)',
-      'Hold Count',
-      'Transfer Count'
-    ]
+    try {
+      // Check if we have data to export
+      if (!processedData || processedData.length === 0) {
+        toast.error('No data available to export')
+        return
+      }
 
-    const csvContent = [
-      headers.join(','),
-      ...processedData.map(queue => [
-        queue.queueId,
-        `"${queue.queueName}"`,
-        queue.mediaType,
-        queue.totalCalls,
-        queue.connectedCalls,
-        queue.errorCalls,
-        queue.offeredCalls,
-        queue.abandonedCalls,
-        queue.transferredCalls,
-        queue.averageHandleTime,
-        queue.averageTalkTime,
-        queue.averageWaitTime,
-        queue.averageHoldTime,
-        queue.averageAcwTime,
-        queue.serviceLevel,
-        queue.serviceLevelTarget,
-        queue.overSla,
-        queue.utilization,
-        queue.status,
-        queue.answerRate,
-        queue.abandonRate,
-        queue.holdCount,
-        queue.transferCount
-      ].join(','))
-    ].join('\n')
+      // Create CSV content from processedData
+      const headers = [
+        'Queue ID',
+        'Queue Name',
+        'Media Type',
+        'Total Calls',
+        'Connected Calls',
+        'Error Calls',
+        'Offered Calls',
+        'Abandoned Calls',
+        'Transferred Calls',
+        'Average Handle Time',
+        'Average Talk Time',
+        'Average Wait Time',
+        'Average Hold Time',
+        'Average ACW Time',
+        'Service Level (%)',
+        'Service Level Target (%)',
+        'Over SLA',
+        'Utilization (%)',
+        'Status',
+        'Answer Rate (%)',
+        'Abandon Rate (%)',
+        'Hold Count',
+        'Transfer Count'
+      ]
 
-    // Create and download the CSV file
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-    const link = document.createElement('a')
-    const url = URL.createObjectURL(blob)
-    link.setAttribute('href', url)
-    link.setAttribute('download', `queue-performance-${new Date().toISOString().split('T')[0]}.csv`)
-    link.style.visibility = 'hidden'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    
-    toast.success('Queue performance data exported successfully')
+      const csvContent = [
+        headers.join(','),
+        ...processedData.map(queue => [
+          queue.queueId || '',
+          `"${queue.queueName || ''}"`,
+          queue.mediaType || '',
+          queue.totalCalls || 0,
+          queue.connectedCalls || 0,
+          queue.errorCalls || 0,
+          queue.offeredCalls || 0,
+          queue.abandonedCalls || 0,
+          queue.transferredCalls || 0,
+          queue.averageHandleTime || '0:00',
+          queue.averageTalkTime || '0:00',
+          queue.averageWaitTime || '0:00',
+          queue.averageHoldTime || '0:00',
+          queue.averageAcwTime || '0:00',
+          queue.serviceLevel || 0,
+          queue.serviceLevelTarget || 0,
+          queue.overSla || 0,
+          queue.utilization || 0,
+          queue.status || '',
+          queue.answerRate || 0,
+          queue.abandonRate || 0,
+          queue.holdCount || 0,
+          queue.transferCount || 0
+        ].join(','))
+      ].join('\n')
+
+      // Create and download the CSV file
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+      const link = document.createElement('a')
+      const url = URL.createObjectURL(blob)
+      link.setAttribute('href', url)
+      link.setAttribute('download', `queue-performance-${new Date().toISOString().split('T')[0]}.csv`)
+      link.style.visibility = 'hidden'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      
+      toast.success('Queue performance data exported successfully')
+    } catch (error) {
+      console.error('Export error:', error)
+      toast.error('Failed to export data')
+    }
   }
 
 
