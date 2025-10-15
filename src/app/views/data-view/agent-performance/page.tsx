@@ -582,9 +582,12 @@ export default function AgentPerformanceAnalytics() {
   }
 
   const handleExport = () => {
+    console.log('handleExport called')
     try {
       // Check if we have data to export
+      console.log('filteredData:', filteredData)
       if (!filteredData || filteredData.length === 0) {
+        console.log('No data available to export')
         toast.error('No data available to export')
         return
       }
@@ -625,6 +628,8 @@ export default function AgentPerformanceAnalytics() {
         ].join(','))
       ].join('\n')
 
+      console.log('CSV content generated, length:', csvContent.length)
+
       // Create and download the CSV file
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
       const link = document.createElement('a')
@@ -636,6 +641,7 @@ export default function AgentPerformanceAnalytics() {
       link.click()
       document.body.removeChild(link)
       
+      console.log('CSV file download triggered')
       toast.success('Agent performance data exported successfully')
     } catch (error) {
       console.error('Export error:', error)

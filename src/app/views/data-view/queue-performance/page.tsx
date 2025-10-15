@@ -888,9 +888,12 @@ export default function DataViewQueuePerformance() {
   }
 
   const handleExportData = () => {
+    console.log('handleExportData called')
     try {
       // Check if we have data to export
+      console.log('processedData:', processedData)
       if (!processedData || processedData.length === 0) {
+        console.log('No data available to export')
         toast.error('No data available to export')
         return
       }
@@ -951,6 +954,8 @@ export default function DataViewQueuePerformance() {
         ].join(','))
       ].join('\n')
 
+      console.log('CSV content generated, length:', csvContent.length)
+
       // Create and download the CSV file
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
       const link = document.createElement('a')
@@ -962,6 +967,7 @@ export default function DataViewQueuePerformance() {
       link.click()
       document.body.removeChild(link)
       
+      console.log('CSV file download triggered')
       toast.success('Queue performance data exported successfully')
     } catch (error) {
       console.error('Export error:', error)
