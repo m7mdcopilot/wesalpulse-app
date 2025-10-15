@@ -35,319 +35,141 @@ function generateDemoCompany() {
 }
 
 function generateDemoUsers(companyId: mongoose.Types.ObjectId) {
-  const users = [
-    {
-      email: 'john.doe@wesalpulse-demo.com',
-      password: 'password123',
-      firstName: 'John',
-      lastName: 'Doe',
-      role: 'agent' as const,
-      department: 'Sales',
-      status: 'active' as const,
-      profile: {
-        avatar: '',
-        phone: '+1234567890',
-        extension: '1001',
-        location: 'New York',
-        bio: 'Experienced sales agent'
-      },
-      preferences: {
-        theme: 'system' as const,
-        language: 'en',
-        notifications: {
-          email: true,
-          sms: true,
-          push: true
-        }
-      },
-      company: companyId
-    },
-    {
-      email: 'jane.smith@wesalpulse-demo.com',
-      password: 'password123',
-      firstName: 'Jane',
-      lastName: 'Smith',
-      role: 'agent' as const,
-      department: 'Support',
-      status: 'active' as const,
-      profile: {
-        avatar: '',
-        phone: '+1234567891',
-        extension: '1002',
-        location: 'Los Angeles',
-        bio: 'Technical support specialist'
-      },
-      preferences: {
-        theme: 'system' as const,
-        language: 'en',
-        notifications: {
-          email: true,
-          sms: true,
-          push: true
-        }
-      },
-      company: companyId
-    },
-    {
-      email: 'mike.wilson@wesalpulse-demo.com',
-      password: 'password123',
-      firstName: 'Mike',
-      lastName: 'Wilson',
-      role: 'supervisor' as const,
-      department: 'Support',
-      status: 'active' as const,
-      profile: {
-        avatar: '',
-        phone: '+1234567892',
-        extension: '1003',
-        location: 'Chicago',
-        bio: 'Support team supervisor'
-      },
-      preferences: {
-        theme: 'system' as const,
-        language: 'en',
-        notifications: {
-          email: true,
-          sms: true,
-          push: true
-        }
-      },
-      company: companyId
-    },
-    {
-      email: 'sarah.brown@wesalpulse-demo.com',
-      password: 'password123',
-      firstName: 'Sarah',
-      lastName: 'Brown',
-      role: 'agent' as const,
-      department: 'Billing',
-      status: 'inactive' as const,
-      profile: {
-        avatar: '',
-        phone: '+1234567893',
-        extension: '1004',
-        location: 'Houston',
-        bio: 'Billing support agent'
-      },
-      preferences: {
-        theme: 'system' as const,
-        language: 'en',
-        notifications: {
-          email: true,
-          sms: true,
-          push: true
-        }
-      },
-      company: companyId
-    },
-    {
-      email: 'david.jones@wesalpulse-demo.com',
-      password: 'password123',
-      firstName: 'David',
-      lastName: 'Jones',
-      role: 'agent' as const,
-      department: 'Technical',
-      status: 'active' as const,
-      profile: {
-        avatar: '',
-        phone: '+1234567894',
-        extension: '1005',
-        location: 'Seattle',
-        bio: 'Technical support agent'
-      },
-      preferences: {
-        theme: 'system' as const,
-        language: 'en',
-        notifications: {
-          email: true,
-          sms: true,
-          push: true
-        }
-      },
-      company: companyId
-    }
+  const firstNames = [
+    'John', 'Jane', 'Mike', 'Sarah', 'David', 'Lisa', 'Robert', 'Emma', 'James', 'Jennifer',
+    'Michael', 'Emily', 'William', 'Olivia', 'Richard', 'Sophia', 'Joseph', 'Isabella', 'Thomas', 'Mia',
+    'Charles', 'Charlotte', 'Christopher', 'Amelia', 'Daniel', 'Harper', 'Matthew', 'Evelyn', 'Anthony', 'Abigail',
+    'Mark', 'Emily', 'Donald', 'Elizabeth', 'Steven', 'Sofia', 'Paul', 'Avery', 'Andrew', 'Ella',
+    'Joshua', 'Scarlett', 'Kenneth', 'Grace', 'Kevin', 'Chloe', 'Brian', 'Victoria', 'George', 'Penelope',
+    'Edward', 'Riley', 'Ronald', 'Aria', 'Timothy', 'Lily', 'Jason', 'Zoe', 'Jeffrey', 'Nora',
+    'Ryan', 'Hannah', 'Jacob', 'Lillian', 'Gary', 'Addison', 'Nicholas', 'Eleanor', 'Eric', 'Stella',
+    'Jonathan', 'Natalie', 'Stephen', 'Hazel', 'Larry', 'Violet', 'Justin', 'Aurora', 'Scott', 'Savannah',
+    'Brandon', 'Audrey', 'Benjamin', 'Brooklyn', 'Gregory', 'Bella', 'Samuel', 'Claire', 'Patrick', 'Skylar',
+    'Alexander', 'Lucy', 'Jack', 'Caroline', 'Dennis', 'Diana', 'Jerry', 'Paisley', 'Tyler', 'Genesis',
+    'Henry', 'Leah', 'Peter', 'Annabelle', 'Douglas', 'Naomi', 'Raymond', 'Gabriella', 'Peter', 'Autumn'
   ];
+  
+  const lastNames = [
+    'Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez',
+    'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin',
+    'Lee', 'Perez', 'Thompson', 'White', 'Harris', 'Sanchez', 'Clark', 'Ramirez', 'Lewis', 'Robinson',
+    'Walker', 'Young', 'Allen', 'King', 'Wright', 'Scott', 'Torres', 'Nguyen', 'Hill', 'Flores',
+    'Green', 'Adams', 'Baker', 'Gonzalez', 'Nelson', 'Carter', 'Mitchell', 'Perez', 'Roberts', 'Turner',
+    'Phillips', 'Campbell', 'Parker', 'Evans', 'Edwards', 'Collins', 'Stewart', 'Sanchez', 'Morris', 'Rogers',
+    'Reed', 'Cook', 'Morgan', 'Bell', 'Murphy', 'Bailey', 'Rivera', 'Cooper', 'Richardson', 'Cox',
+    'Howard', 'Ward', 'Torres', 'Peterson', 'Gray', 'Ramirez', 'James', 'Watson', 'Brooks', 'Kelly',
+    'Sanders', 'Price', 'Bennett', 'Wood', 'Barnes', 'Ross', 'Henderson', 'Coleman', 'Jenkins', 'Perry'
+  ];
+  
+  const departments = [
+    'Sales', 'Support', 'Billing', 'Technical', 'Retention', 'Customer Service', 'Help Desk',
+    'Emergency', 'Complaints', 'Inquiries', 'Orders', 'Returns', 'Warranty', 'Installation',
+    'Maintenance', 'Consultation', 'Booking', 'Reservations', 'Information', 'Feedback',
+    'Escalation', 'VIP', 'International', 'Outbound', 'Training', 'Quality Assurance'
+  ];
+  
+  const locations = [
+    'New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia', 'San Antonio', 'San Diego',
+    'Dallas', 'San Jose', 'Austin', 'Jacksonville', 'Fort Worth', 'Columbus', 'San Francisco', 'Charlotte',
+    'Indianapolis', 'Seattle', 'Denver', 'Washington', 'Boston', 'El Paso', 'Nashville', 'Detroit', 'Portland',
+    'Las Vegas', 'Louisville', 'Baltimore', 'Milwaukee', 'Albuquerque', 'Tucson', 'Fresno', 'Mesa', 'Sacramento',
+    'Atlanta', 'Kansas City', 'Colorado Springs', 'Omaha', 'Raleigh', 'Miami', 'Long Beach', 'Virginia Beach',
+    'Oakland', 'Minneapolis', 'Tulsa', 'Arlington', 'Tampa', 'New Orleans', 'Cleveland', 'Wichita', 'Bakersfield'
+  ];
+  
+  const roles = ['agent', 'agent', 'agent', 'agent', 'supervisor', 'manager']; // Mostly agents, some supervisors/managers
+  
+  const users = [];
+  
+  for (let i = 0; i < 115; i++) {
+    const firstName = firstNames[i % firstNames.length];
+    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+    const department = departments[Math.floor(Math.random() * departments.length)];
+    const location = locations[Math.floor(Math.random() * locations.length)];
+    const role = roles[Math.floor(Math.random() * roles.length)];
+    const status = Math.random() > 0.15 ? 'active' as const : 'inactive' as const;
+    
+    const user = {
+      email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@wesalpulse-demo.com`,
+      password: 'password123',
+      firstName: firstName,
+      lastName: lastName,
+      role: role,
+      department: department,
+      status: status,
+      profile: {
+        avatar: '',
+        phone: `+1${Math.floor(Math.random() * 9000000000) + 100000000}`,
+        extension: `${1000 + i}`,
+        location: location,
+        bio: `${department} ${role} with ${Math.floor(Math.random() * 10) + 1} years of experience`
+      },
+      preferences: {
+        theme: ['system', 'light', 'dark'][Math.floor(Math.random() * 3)] as 'system' | 'light' | 'dark',
+        language: 'en',
+        notifications: {
+          email: Math.random() > 0.2,
+          sms: Math.random() > 0.5,
+          push: Math.random() > 0.3
+        }
+      },
+      company: companyId
+    };
+    
+    users.push(user);
+  }
+  
   return users;
 }
 
 function generateDemoQueues(companyId: mongoose.Types.ObjectId) {
-  const queues = [
-    {
-      name: 'Sales Queue',
-      description: 'Sales and customer acquisition calls',
-      type: 'inbound' as const,
-      status: 'active' as const,
-      settings: {
-        maxWaitTime: 300,
-        serviceLevel: 85,
-        overflow: {
-          enabled: true,
-          waitTime: 180
-        },
-        callback: {
-          enabled: true,
-          maxAttempts: 3,
-          interval: 30
-        },
-        recording: {
-          enabled: true,
-          quality: 'medium' as const,
-          retention: 90
-        }
-      },
-      metrics: {
-        totalCalls: 0,
-        answeredCalls: 0,
-        abandonedCalls: 0,
-        averageWaitTime: 0,
-        averageHandleTime: 0,
-        serviceLevel: 0,
-        lastUpdated: new Date()
-      },
-      agents: [],
-      company: companyId
-    },
-    {
-      name: 'Support Queue',
-      description: 'Technical support and customer service',
-      type: 'inbound' as const,
-      status: 'active' as const,
-      settings: {
-        maxWaitTime: 180,
-        serviceLevel: 90,
-        overflow: {
-          enabled: false,
-          waitTime: 120
-        },
-        callback: {
-          enabled: true,
-          maxAttempts: 2,
-          interval: 45
-        },
-        recording: {
-          enabled: true,
-          quality: 'high' as const,
-          retention: 120
-        }
-      },
-      metrics: {
-        totalCalls: 0,
-        answeredCalls: 0,
-        abandonedCalls: 0,
-        averageWaitTime: 0,
-        averageHandleTime: 0,
-        serviceLevel: 0,
-        lastUpdated: new Date()
-      },
-      agents: [],
-      company: companyId
-    },
-    {
-      name: 'Billing Queue',
-      description: 'Billing and payment related inquiries',
-      type: 'inbound' as const,
-      status: 'active' as const,
-      settings: {
-        maxWaitTime: 240,
-        serviceLevel: 80,
-        overflow: {
-          enabled: false,
-          waitTime: 180
-        },
-        callback: {
-          enabled: false,
-          maxAttempts: 1,
-          interval: 60
-        },
-        recording: {
-          enabled: true,
-          quality: 'medium' as const,
-          retention: 60
-        }
-      },
-      metrics: {
-        totalCalls: 0,
-        answeredCalls: 0,
-        abandonedCalls: 0,
-        averageWaitTime: 0,
-        averageHandleTime: 0,
-        serviceLevel: 0,
-        lastUpdated: new Date()
-      },
-      agents: [],
-      company: companyId
-    },
-    {
-      name: 'Technical Queue',
-      description: 'Advanced technical support',
-      type: 'inbound' as const,
-      status: 'active' as const,
-      settings: {
-        maxWaitTime: 360,
-        serviceLevel: 75,
-        overflow: {
-          enabled: true,
-          waitTime: 240
-        },
-        callback: {
-          enabled: true,
-          maxAttempts: 4,
-          interval: 20
-        },
-        recording: {
-          enabled: true,
-          quality: 'high' as const,
-          retention: 180
-        }
-      },
-      metrics: {
-        totalCalls: 0,
-        answeredCalls: 0,
-        abandonedCalls: 0,
-        averageWaitTime: 0,
-        averageHandleTime: 0,
-        serviceLevel: 0,
-        lastUpdated: new Date()
-      },
-      agents: [],
-      company: companyId
-    },
-    {
-      name: 'Retention Queue',
-      description: 'Customer retention and loyalty calls',
-      type: 'blended' as const,
-      status: 'active' as const,
-      settings: {
-        maxWaitTime: 120,
-        serviceLevel: 95,
-        overflow: {
-          enabled: false,
-          waitTime: 90
-        },
-        callback: {
-          enabled: true,
-          maxAttempts: 2,
-          interval: 15
-        },
-        recording: {
-          enabled: true,
-          quality: 'high' as const,
-          retention: 365
-        }
-      },
-      metrics: {
-        totalCalls: 0,
-        answeredCalls: 0,
-        abandonedCalls: 0,
-        averageWaitTime: 0,
-        averageHandleTime: 0,
-        serviceLevel: 0,
-        lastUpdated: new Date()
-      },
-      agents: [],
-      company: companyId
-    }
+  const queueTypes = [
+    'Sales', 'Support', 'Billing', 'Technical', 'Retention', 'Customer Service', 'Help Desk',
+    'Emergency', 'Complaints', 'Inquiries', 'Orders', 'Returns', 'Warranty', 'Installation',
+    'Maintenance', 'Consultation', 'Booking', 'Reservations', 'Information', 'Feedback',
+    'Escalation', 'VIP', 'International', 'Outbound', 'Training', 'Quality Assurance'
   ];
+  
+  const queues = queueTypes.map((type, index) => {
+    const baseSettings = {
+      maxWaitTime: 120 + Math.floor(Math.random() * 240), // 120-360 seconds
+      serviceLevel: 75 + Math.floor(Math.random() * 20), // 75-95%
+      overflow: {
+        enabled: Math.random() > 0.5,
+        waitTime: 120 + Math.floor(Math.random() * 120)
+      },
+      callback: {
+        enabled: Math.random() > 0.3,
+        maxAttempts: 1 + Math.floor(Math.random() * 4),
+        interval: 15 + Math.floor(Math.random() * 45)
+      },
+      recording: {
+        enabled: true,
+        quality: ['low', 'medium', 'high'][Math.floor(Math.random() * 3)] as 'low' | 'medium' | 'high',
+        retention: 30 + Math.floor(Math.random() * 330)
+      }
+    };
+    
+    return {
+      name: `${type} Queue`,
+      description: `${type} related calls and inquiries`,
+      type: Math.random() > 0.8 ? 'blended' : 'inbound' as const,
+      status: Math.random() > 0.1 ? 'active' as const : 'inactive' as const,
+      settings: baseSettings,
+      metrics: {
+        totalCalls: 0,
+        answeredCalls: 0,
+        abandonedCalls: 0,
+        averageWaitTime: 0,
+        averageHandleTime: 0,
+        serviceLevel: 0,
+        lastUpdated: new Date()
+      },
+      agents: [],
+      company: companyId
+    };
+  });
+  
   return queues;
 }
 
