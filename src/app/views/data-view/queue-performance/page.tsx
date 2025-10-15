@@ -888,6 +888,73 @@ export default function DataViewQueuePerformance() {
   }
 
   const handleExportData = () => {
+    // Create CSV content from processedData
+    const headers = [
+      'Queue ID',
+      'Queue Name',
+      'Media Type',
+      'Total Calls',
+      'Connected Calls',
+      'Error Calls',
+      'Offered Calls',
+      'Abandoned Calls',
+      'Transferred Calls',
+      'Average Handle Time',
+      'Average Talk Time',
+      'Average Wait Time',
+      'Average Hold Time',
+      'Average ACW Time',
+      'Service Level (%)',
+      'Service Level Target (%)',
+      'Over SLA',
+      'Utilization (%)',
+      'Status',
+      'Answer Rate (%)',
+      'Abandon Rate (%)',
+      'Hold Count',
+      'Transfer Count'
+    ]
+
+    const csvContent = [
+      headers.join(','),
+      ...processedData.map(queue => [
+        queue.queueId,
+        `"${queue.queueName}"`,
+        queue.mediaType,
+        queue.totalCalls,
+        queue.connectedCalls,
+        queue.errorCalls,
+        queue.offeredCalls,
+        queue.abandonedCalls,
+        queue.transferredCalls,
+        queue.averageHandleTime,
+        queue.averageTalkTime,
+        queue.averageWaitTime,
+        queue.averageHoldTime,
+        queue.averageAcwTime,
+        queue.serviceLevel,
+        queue.serviceLevelTarget,
+        queue.overSla,
+        queue.utilization,
+        queue.status,
+        queue.answerRate,
+        queue.abandonRate,
+        queue.holdCount,
+        queue.transferCount
+      ].join(','))
+    ].join('\n')
+
+    // Create and download the CSV file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+    link.setAttribute('href', url)
+    link.setAttribute('download', `queue-performance-${new Date().toISOString().split('T')[0]}.csv`)
+    link.style.visibility = 'hidden'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    
     toast.success('Queue performance data exported successfully')
   }
 

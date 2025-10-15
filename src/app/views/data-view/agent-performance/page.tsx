@@ -582,6 +582,53 @@ export default function AgentPerformanceAnalytics() {
   }
 
   const handleExport = () => {
+    // Create CSV content from filteredData (which contains the processed agent data)
+    const headers = [
+      'Agent ID',
+      'Agent Name',
+      'Media Type',
+      'Time in Status (seconds)',
+      'Status',
+      'Answered Calls',
+      'Handled Calls',
+      'Average Handle Time',
+      'Average Talk Time',
+      'Average Hold Time',
+      'Average ACW Time',
+      'Hold Count',
+      'Transfer Count'
+    ]
+
+    const csvContent = [
+      headers.join(','),
+      ...filteredData.map(agent => [
+        agent.agentId,
+        `"${agent.agentName}"`,
+        agent.mediaType,
+        agent.timeInStatus,
+        agent.status,
+        agent.answeredCalls,
+        agent.handledCalls,
+        agent.averageHandleTime,
+        agent.averageTalkTime,
+        agent.averageHoldTime,
+        agent.averageAcwTime,
+        agent.holdCount,
+        agent.transferCount
+      ].join(','))
+    ].join('\n')
+
+    // Create and download the CSV file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+    link.setAttribute('href', url)
+    link.setAttribute('download', `agent-performance-${new Date().toISOString().split('T')[0]}.csv`)
+    link.style.visibility = 'hidden'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    
     toast.success('Agent performance data exported successfully')
   }
 
