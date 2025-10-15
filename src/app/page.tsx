@@ -205,7 +205,7 @@ export default function Home() {
                 <div className="w-2 h-2 bg-red-500 rounded-full mr-1 animate-pulse"></div>
                 Live
               </div>
-              Queue Activity
+              Queues Activity
             </p>
           </div>
           

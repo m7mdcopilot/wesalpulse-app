@@ -68,13 +68,7 @@ export function SidebarNavigation({ className }: SidebarNavigationProps) {
           label: 'Home',
           icon: <Home className="h-4 w-4" />,
           href: '/',
-        },
-        {
-          id: 'call-center',
-          label: 'Call Center',
-          icon: <LayoutDashboard className="h-4 w-4" />,
-          href: '/views/dashboards/call-center',
-        },
+        }
       ],
     },
     {

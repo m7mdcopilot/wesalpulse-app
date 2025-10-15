@@ -106,10 +106,6 @@ export default function SettingsGeneral() {
       enabled: true,
       recipients: ['security-team@wesalpulse.com', 'it-admin@wesalpulse.com']
     },
-    securityAlerts: {
-      enabled: true,
-      recipients: ['security-team@wesalpulse.com', 'admin@wesalpulse.com']
-    },
     billingNotifications: {
       enabled: true,
       recipients: ['finance@wesalpulse.com', 'admin@wesalpulse.com']
@@ -117,18 +113,6 @@ export default function SettingsGeneral() {
     weeklyReports: {
       enabled: false,
       recipients: ['management@wesalpulse.com']
-    },
-    agentPerformance: {
-      enabled: true,
-      recipients: ['supervisors@wesalpulse.com', 'hr@wesalpulse.com']
-    },
-    queueThresholds: {
-      enabled: true,
-      recipients: ['operations@wesalpulse.com', 'supervisors@wesalpulse.com']
-    },
-    customerFeedback: {
-      enabled: false,
-      recipients: ['support@wesalpulse.com', 'quality@wesalpulse.com']
     }
   })
   const [smsAlerts, setSmsAlerts] = useState({
@@ -163,12 +147,8 @@ export default function SettingsGeneral() {
   // Individual alert type input states
   const [alertEmailInputs, setAlertEmailInputs] = useState({
     systemUpdates: '',
-    securityAlerts: '',
     billingNotifications: '',
-    weeklyReports: '',
-    agentPerformance: '',
-    queueThresholds: '',
-    customerFeedback: ''
+    weeklyReports: ''
   })
   const [alertPhoneInputs, setAlertPhoneInputs] = useState({
     criticalAlerts: '',
@@ -205,10 +185,6 @@ export default function SettingsGeneral() {
       interval: '5m'
     },
     queuePerformance: {
-      enabled: true,
-      interval: '1h'
-    },
-    agentPerformance: {
       enabled: true,
       interval: '1h'
     }
@@ -646,35 +622,7 @@ export default function SettingsGeneral() {
                     </div>
                   </CardContent>
                 </Card>
-
-                {/* Two-Factor Authentication */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Smartphone className="h-5 w-5" />
-                      Two-Factor Authentication
-                    </CardTitle>
-                    <CardDescription>
-                      Add an extra layer of security to your account
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-1">
-                        <p className="font-medium">Authenticator App</p>
-                        <p className="text-sm text-gray-500">
-                          {twoFactorEnabled ? 'Enabled' : 'Disabled'} - Use an authenticator app for 2FA
-                        </p>
-                      </div>
-                      <Switch
-                        checked={twoFactorEnabled}
-                        onCheckedChange={setTwoFactorEnabled}
-                        className="cursor-pointer"
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-
+ 
                 {/* Login Devices */}
                 <Card>
                   <CardHeader>
@@ -953,11 +901,6 @@ export default function SettingsGeneral() {
                             title: "System Updates",
                             description: "Get notified about system maintenance, updates, and changes"
                           },
-                          securityAlerts: {
-                            icon: <Shield className="h-4 w-4" />,
-                            title: "Security Alerts",
-                            description: "Important security notifications and potential threats"
-                          },
                           billingNotifications: {
                             icon: <CreditCard className="h-4 w-4" />,
                             title: "Billing Notifications",
@@ -967,21 +910,6 @@ export default function SettingsGeneral() {
                             icon: <BarChart3 className="h-4 w-4" />,
                             title: "Weekly Reports",
                             description: "Comprehensive weekly performance and activity reports"
-                          },
-                          agentPerformance: {
-                            icon: <Users className="h-4 w-4" />,
-                            title: "Agent Performance",
-                            description: "Agent productivity, performance metrics, and achievements"
-                          },
-                          queueThresholds: {
-                            icon: <Activity className="h-4 w-4" />,
-                            title: "Queue Thresholds",
-                            description: "Alerts when queue levels exceed predefined thresholds"
-                          },
-                          customerFeedback: {
-                            icon: <CheckCircle className="h-4 w-4" />,
-                            title: "Customer Feedback",
-                            description: "Customer satisfaction scores and feedback notifications"
                           }
                         }
                         
@@ -1064,213 +992,8 @@ export default function SettingsGeneral() {
                     </div>
                   </CardContent>
                 </Card>
-
-                {/* SMS Alerts */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Smartphone className="h-5 w-5" />
-                      SMS Alerts
-                    </CardTitle>
-                    <CardDescription>
-                      Configure SMS notifications for critical events
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {/* Enhanced SMS Recipients */}
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2">
-                        <Smartphone className="h-5 w-5 text-green-600" />
-                        <Label className="text-base font-semibold">SMS Notification Recipients</Label>
-                      </div>
-                      
-                      {/* Phone Input with Add Button */}
-                      <div className="flex gap-2">
-                        <div className="flex-1">
-                          <Input
-                            id="phoneInput"
-                            type="tel"
-                            value={phoneInput}
-                            onChange={(e) => setPhoneInput(e.target.value)}
-                            onKeyPress={handlePhoneKeyPress}
-                            placeholder="Enter phone number..."
-                            className="w-full"
-                          />
-                        </div>
-                        <Button 
-                          onClick={handleAddPhone}
-                          size="sm"
-                          className="cursor-pointer bg-primary hover:bg-primary/90"
-                        >
-                          <Plus className="h-4 w-4" />
-                        </Button>
-                      </div>
-                      
-                      {/* Phone Badges Display */}
-                      {taggedPhones.length > 0 && (
-                        <div className="flex flex-wrap gap-2">
-                          {taggedPhones.map((phone, index) => (
-                            <Badge key={index} variant="secondary" className="flex items-center gap-1 px-3 py-1">
-                              <Smartphone className="h-3 w-3" />
-                              {phone}
-                              <button
-                                onClick={() => handleRemovePhone(phone)}
-                                className="ml-1 hover:text-red-600 transition-colors"
-                              >
-                                <X className="h-3 w-3" />
-                              </button>
-                            </Badge>
-                          ))}
-                        </div>
-                      )}
-                      
-                      <p className="text-sm text-gray-500">
-                        These recipients will receive notifications for all enabled SMS alerts below
-                      </p>
-                    </div>
-                    
-                    {/* Enhanced SMS Alert Types */}
-                    <div className="space-y-6">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Bell className="h-4 w-4 text-green-600" />
-                        <span className="font-medium">SMS Alert Types with Individual Recipients</span>
-                      </div>
-                      
-                      {Object.entries(smsAlerts).map(([key, value]) => {
-                        const alertConfig = {
-                          criticalAlerts: {
-                            icon: <Shield className="h-4 w-4" />,
-                            title: "Critical Alerts",
-                            description: "Immediate SMS for critical system issues and emergencies"
-                          },
-                          securityBreaches: {
-                            icon: <Lock className="h-4 w-4" />,
-                            title: "Security Breaches",
-                            description: "Urgent notifications about security incidents and breaches"
-                          },
-                          systemDowntime: {
-                            icon: <Cloud className="h-4 w-4" />,
-                            title: "System Downtime",
-                            description: "Alerts when system becomes unavailable or experiences issues"
-                          },
-                          emergencyIncidents: {
-                            icon: <Activity className="h-4 w-4" />,
-                            title: "Emergency Incidents",
-                            description: "High-priority incidents requiring immediate attention"
-                          }
-                        }
-                        
-                        const config = alertConfig[key as keyof typeof alertConfig]
-                        
-                        return (
-                          <div key={key} className="p-3 border rounded-lg hover:bg-gray-50 transition-colors space-y-3">
-                            {/* Alert Header with Toggle */}
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-3">
-                                <div className="text-green-600">
-                                  {config.icon}
-                                </div>
-                                <div>
-                                  <p className="font-medium">{config.title}</p>
-                                  <p className="text-sm text-gray-500">{config.description}</p>
-                                </div>
-                              </div>
-                              <Switch
-                                checked={value.enabled}
-                                onCheckedChange={(checked) => handleNotificationChange('sms', key, checked)}
-                                className="cursor-pointer"
-                              />
-                            </div>
-                            
-                            {/* Individual Phone Recipients for this Alert Type */}
-                            <div className="space-y-2">
-                              <div className="flex items-center gap-2">
-                                <Smartphone className="h-3 w-3 text-green-500" />
-                                <span className="text-sm font-medium">Specific Recipients</span>
-                              </div>
-                              
-                              {/* Phone Input for this Alert Type */}
-                              <div className="flex gap-2">
-                                <div className="flex-1">
-                                  <Input
-                                    id={`phoneInput-${key}`}
-                                    type="tel"
-                                    value={alertPhoneInputs[key as keyof typeof alertPhoneInputs]}
-                                    onChange={(e) => handleAlertPhoneInputChange(key, e.target.value)}
-                                    onKeyPress={(e) => handleAlertPhoneKeyPress(key, e)}
-                                    placeholder="Add phone number..."
-                                    className="w-full h-8 text-sm"
-                                  />
-                                </div>
-                                <Button 
-                                  onClick={() => handleAddAlertPhone(key)}
-                                  size="sm"
-                                  className="cursor-pointer bg-primary hover:bg-primary/90 h-8 px-2"
-                                >
-                                  <Plus className="h-3 w-3" />
-                                </Button>
-                              </div>
-                              
-                              {/* Phone Badges for this Alert Type */}
-                              {value.recipients && value.recipients.length > 0 && (
-                                <div className="flex flex-wrap gap-1">
-                                  {value.recipients.map((phone: string, index: number) => (
-                                    <Badge key={index} variant="outline" className="flex items-center gap-1 px-2 py-0 text-xs">
-                                      <Smartphone className="h-2 w-2" />
-                                      {phone}
-                                      <button
-                                        onClick={() => handleRemoveAlertPhone(key, phone)}
-                                        className="ml-1 hover:text-red-600 transition-colors"
-                                      >
-                                        <X className="h-2 w-2" />
-                                      </button>
-                                    </Badge>
-                                  ))}
-                                </div>
-                              )}
-                              
-                              {value.recipients && value.recipients.length === 0 && (
-                                <p className="text-xs text-gray-400">No specific recipients set. Will use default recipients.</p>
-                              )}
-                            </div>
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* In-App Notifications */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Bell className="h-5 w-5" />
-                      In-App Notifications
-                    </CardTitle>
-                    <CardDescription>
-                      Configure notifications within the application
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {Object.entries(inAppNotifications).map(([key, value]) => (
-                      <div key={key} className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium capitalize">
-                            {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            Receive in-app notifications for {key.replace(/([A-Z])/g, ' $1').toLowerCase()}
-                          </p>
-                        </div>
-                        <Switch
-                          checked={value}
-                          onCheckedChange={(checked) => handleNotificationChange('inApp', key, checked)}
-                          className="cursor-pointer"
-                        />
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
+ 
+ 
               </div>
             </TabsContent>
 
@@ -1384,210 +1107,6 @@ export default function SettingsGeneral() {
                       <Button
                         onClick={() => {
                           toast.success('Genesys Cloud integration settings saved successfully')
-                        }}
-                        className="cursor-pointer"
-                      >
-                        Save Settings
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* API Usage Settings */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Activity className="h-5 w-5" />
-                      API Usage Settings
-                    </CardTitle>
-                    <CardDescription>
-                      Configure auto-refresh options for different data types
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    {/* Current Call Status */}
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 bg-blue-100 rounded-lg">
-                            <Activity className="h-4 w-4 text-blue-600" />
-                          </div>
-                          <div>
-                            <p className="font-medium">Current Call Status</p>
-                            <p className="text-sm text-gray-500">Auto-refresh real-time call data</p>
-                          </div>
-                        </div>
-                        <Switch
-                          checked={apiUsageSettings.currentCallStatus.enabled}
-                          onCheckedChange={(checked) => setApiUsageSettings(prev => ({
-                            ...prev,
-                            currentCallStatus: { ...prev.currentCallStatus, enabled: checked }
-                          }))}
-                          className="cursor-pointer"
-                        />
-                      </div>
-                      
-                      {apiUsageSettings.currentCallStatus.enabled && (
-                        <div className="ml-11 space-y-2">
-                          <Label>Refresh Interval</Label>
-                          <Select value={apiUsageSettings.currentCallStatus.interval} onValueChange={(value) => setApiUsageSettings(prev => ({
-                            ...prev,
-                            currentCallStatus: { ...prev.currentCallStatus, interval: value }
-                          }))}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select interval" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="1m">1 minute</SelectItem>
-                              <SelectItem value="5m">5 minutes</SelectItem>
-                              <SelectItem value="10m">10 minutes</SelectItem>
-                              <SelectItem value="30m">30 minutes</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      )}
-                    </div>
-
-                    <Separator />
-
-                    {/* Call Center Performance */}
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 bg-green-100 rounded-lg">
-                            <BarChart3 className="h-4 w-4 text-green-600" />
-                          </div>
-                          <div>
-                            <p className="font-medium">Call Center Performance</p>
-                            <p className="text-sm text-gray-500">Auto-refresh call center metrics</p>
-                          </div>
-                        </div>
-                        <Switch
-                          checked={apiUsageSettings.callCenterPerformance.enabled}
-                          onCheckedChange={(checked) => setApiUsageSettings(prev => ({
-                            ...prev,
-                            callCenterPerformance: { ...prev.callCenterPerformance, enabled: checked }
-                          }))}
-                          className="cursor-pointer"
-                        />
-                      </div>
-                      
-                      {apiUsageSettings.callCenterPerformance.enabled && (
-                        <div className="ml-11 space-y-2">
-                          <Label>Refresh Interval</Label>
-                          <Select value={apiUsageSettings.callCenterPerformance.interval} onValueChange={(value) => setApiUsageSettings(prev => ({
-                            ...prev,
-                            callCenterPerformance: { ...prev.callCenterPerformance, interval: value }
-                          }))}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select interval" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="1m">1 minute</SelectItem>
-                              <SelectItem value="5m">5 minutes</SelectItem>
-                              <SelectItem value="10m">10 minutes</SelectItem>
-                              <SelectItem value="30m">30 minutes</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      )}
-                    </div>
-
-                    <Separator />
-
-                    {/* Queue Performance */}
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 bg-purple-100 rounded-lg">
-                            <Users className="h-4 w-4 text-purple-600" />
-                          </div>
-                          <div>
-                            <p className="font-medium">Queue Performance</p>
-                            <p className="text-sm text-gray-500">Auto-refresh queue performance data</p>
-                          </div>
-                        </div>
-                        <Switch
-                          checked={apiUsageSettings.queuePerformance.enabled}
-                          onCheckedChange={(checked) => setApiUsageSettings(prev => ({
-                            ...prev,
-                            queuePerformance: { ...prev.queuePerformance, enabled: checked }
-                          }))}
-                          className="cursor-pointer"
-                        />
-                      </div>
-                      
-                      {apiUsageSettings.queuePerformance.enabled && (
-                        <div className="ml-11 space-y-2">
-                          <Label>Refresh Interval</Label>
-                          <Select value={apiUsageSettings.queuePerformance.interval} onValueChange={(value) => setApiUsageSettings(prev => ({
-                            ...prev,
-                            queuePerformance: { ...prev.queuePerformance, interval: value }
-                          }))}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select interval" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="30m">30 minutes</SelectItem>
-                              <SelectItem value="1h">1 hour</SelectItem>
-                              <SelectItem value="3h">3 hours</SelectItem>
-                              <SelectItem value="6h">6 hours</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      )}
-                    </div>
-
-                    <Separator />
-
-                    {/* Agent Performance */}
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 bg-orange-100 rounded-lg">
-                            <BarChart3 className="h-4 w-4 text-orange-600" />
-                          </div>
-                          <div>
-                            <p className="font-medium">Agent Performance</p>
-                            <p className="text-sm text-gray-500">Auto-refresh agent performance metrics</p>
-                          </div>
-                        </div>
-                        <Switch
-                          checked={apiUsageSettings.agentPerformance.enabled}
-                          onCheckedChange={(checked) => setApiUsageSettings(prev => ({
-                            ...prev,
-                            agentPerformance: { ...prev.agentPerformance, enabled: checked }
-                          }))}
-                          className="cursor-pointer"
-                        />
-                      </div>
-                      
-                      {apiUsageSettings.agentPerformance.enabled && (
-                        <div className="ml-11 space-y-2">
-                          <Label>Refresh Interval</Label>
-                          <Select value={apiUsageSettings.agentPerformance.interval} onValueChange={(value) => setApiUsageSettings(prev => ({
-                            ...prev,
-                            agentPerformance: { ...prev.agentPerformance, interval: value }
-                          }))}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select interval" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="30m">30 minutes</SelectItem>
-                              <SelectItem value="1h">1 hour</SelectItem>
-                              <SelectItem value="3h">3 hours</SelectItem>
-                              <SelectItem value="6h">6 hours</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Save Button */}
-                    <div className="flex justify-end">
-                      <Button
-                        onClick={() => {
-                          toast.success('API usage settings saved successfully')
                         }}
                         className="cursor-pointer"
                       >
