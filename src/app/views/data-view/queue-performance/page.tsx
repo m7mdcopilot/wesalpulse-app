@@ -1131,6 +1131,7 @@ export default function DataViewQueuePerformance() {
               variant="outline"
               size="sm"
               disabled={loading}
+              onClick={handleExportData}
               className="cursor-pointer transition-all duration-200 hover:scale-105"
             > <Download className="h-4 w-4 mr-2" /> Export</Button>
           </div>
