@@ -1,0 +1,67 @@
+{
+  "agentPerformance": {
+    "overview": {
+      "totalAgents": 4,
+      "activeAgents": 4,
+      "totalCalls": 25,
+      "averageHandleTime": "7:09",
+      "averageSatisfaction": "2.9",
+      "lastUpdated": "2025-10-06T19:30:33.853Z"
+    },
+    "agents": [
+      {
+        "id": "68e3b66e5ac07047fc8989af",
+        "name": "Agent 1 User",
+        "totalCalls": 5,
+        "answeredCalls": 4,
+        "averageHandleTime": "7:41",
+        "averageTalkTime": "2:54",
+        "averageWrapTime": "4:47",
+        "satisfaction": "2.5",
+        "qualityScore": 88,
+        "adherence": "99%",
+        "status": "needs_improvement"
+      },
+      {
+        "id": "68e3b66e5ac07047fc8989b0",
+        "name": "Agent 2 User",
+        "totalCalls": 2,
+        "answeredCalls": 2,
+        "averageHandleTime": "5:51",
+        "averageTalkTime": "6:55",
+        "averageWrapTime": "-2:-4",
+        "satisfaction": "2.5",
+        "qualityScore": 81,
+        "adherence": "92%",
+        "status": "needs_improvement"
+      },
+      {
+        "id": "68e3b66e5ac07047fc8989ad",
+        "name": "Manager User",
+        "totalCalls": 4,
+        "answeredCalls": 4,
+        "averageHandleTime": "4:43",
+        "averageTalkTime": "4:18",
+        "averageWrapTime": "0:24",
+        "satisfaction": "3.3",
+        "qualityScore": 76,
+        "adherence": "94%",
+        "status": "good"
+      },
+      {
+        "id": "68e3b66e5ac07047fc8989ae",
+        "name": "Supervisor User",
+        "totalCalls": 7,
+        "answeredCalls": 6,
+        "averageHandleTime": "8:21",
+        "averageTalkTime": "4:24",
+        "averageWrapTime": "3:56",
+        "satisfaction": "3.0",
+        "qualityScore": 78,
+        "adherence": "94%",
+        "status": "good"
+      }
+    ],
+    "lastUpdated": "2025-10-06T19:30:33.853Z"
+  }
+}
