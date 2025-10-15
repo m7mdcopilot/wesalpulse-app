@@ -354,58 +354,78 @@ function generateDemoQueues(companyId: mongoose.Types.ObjectId) {
 function generateDemoCalls(companyId: mongoose.Types.ObjectId, users: any[], queues: any[]) {
   const calls = [];
   const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   
-  // Generate calls for today
-  for (let i = 0; i < 150; i++) {
-    const startTime = new Date(today.getTime() + Math.random() * 8 * 60 * 60 * 1000); // Random time during work hours
-    const isAnswered = Math.random() > 0.2; // 80% answer rate
-    const isTransferred = Math.random() > 0.8; // 20% transfer rate
+  // Generate calls for the last 7 days to create more realistic data
+  for (let day = 6; day >= 0; day--) {
+    const targetDate = new Date(now);
+    targetDate.setDate(targetDate.getDate() - day);
+    targetDate.setHours(0, 0, 0, 0);
     
-    const randomUser = users[Math.floor(Math.random() * users.length)];
-    const randomQueue = queues[Math.floor(Math.random() * queues.length)];
+    // Generate more calls per day (increased from 150 to 300 calls per day)
+    const callsPerDay = day === 0 ? 350 : 300; // More calls for today
     
-    const call = {
-      callId: `CALL-${String(i + 1).padStart(6, '0')}`,
-      direction: 'inbound' as const,
-      status: isAnswered ? (Math.random() > 0.1 ? 'completed' : 'answered') : (Math.random() > 0.5 ? 'abandoned' : 'ringing'),
-      customer: {
-        name: `Customer ${i + 1}`,
-        phone: `+1${Math.floor(Math.random() * 9000000000) + 100000000}`,
-        email: `customer${i + 1}@example.com`,
-        accountNumber: `ACC${String(i + 1).padStart(8, '0')}`
-      },
-      agent: randomUser._id,
-      queue: randomQueue._id,
-      company: companyId,
-      timing: {
-        startTime: startTime,
-        answerTime: isAnswered ? new Date(startTime.getTime() + Math.random() * 60 * 1000) : undefined,
-        endTime: isAnswered ? new Date(startTime.getTime() + Math.random() * 600 * 1000 + 60 * 1000) : undefined,
-        waitTime: Math.floor(Math.random() * 120),
-        handleTime: Math.floor(Math.random() * 480) + 60,
-        talkTime: Math.floor(Math.random() * 360) + 30,
-        holdTime: Math.floor(Math.random() * 60)
-      },
-      outcome: {
-        resolved: Math.random() > 0.3,
-        category: ['Sales', 'Support', 'Billing', 'Technical', 'Retention'][Math.floor(Math.random() * 5)],
-        subcategory: ['General', 'Urgent', 'Complex', 'Simple'][Math.floor(Math.random() * 4)],
-        priority: ['low', 'medium', 'high', 'urgent'][Math.floor(Math.random() * 4)],
-        notes: `Call ${i + 1} notes`,
-        tags: ['important', 'follow-up', 'resolved'].filter(() => Math.random() > 0.7)
-      },
-      metadata: {
-        source: ['Web', 'Phone', 'Email', 'Chat'][Math.floor(Math.random() * 4)],
-        campaign: Math.random() > 0.7 ? `Campaign ${Math.floor(Math.random() * 5) + 1}` : undefined,
-        disposition: isAnswered ? 'Completed' : 'Missed',
-        transferred: isTransferred,
-        conference: Math.random() > 0.9,
-        skills: ['sales', 'support', 'technical', 'billing'].filter(() => Math.random() > 0.6)
-      }
-    };
-    
-    calls.push(call);
+    for (let i = 0; i < callsPerDay; i++) {
+      // Generate calls during work hours (9 AM - 6 PM)
+      const startHour = 9 + Math.floor(Math.random() * 9); // 9 AM to 6 PM
+      const startMinute = Math.floor(Math.random() * 60);
+      const startTime = new Date(targetDate);
+      startTime.setHours(startHour, startMinute, 0, 0);
+      
+      const isAnswered = Math.random() > 0.15; // 85% answer rate (slightly better)
+      const isTransferred = Math.random() > 0.75; // 25% transfer rate
+      
+      const randomUser = users[Math.floor(Math.random() * users.length)];
+      const randomQueue = queues[Math.floor(Math.random() * queues.length)];
+      
+      const call = {
+        callId: `CALL-${String(calls.length + 1).padStart(6, '0')}`,
+        direction: 'inbound' as const,
+        status: isAnswered ? (Math.random() > 0.1 ? 'completed' : 'answered') : (Math.random() > 0.5 ? 'abandoned' : 'ringing'),
+        customer: {
+          name: `Customer ${calls.length + 1}`,
+          phone: `+1${Math.floor(Math.random() * 9000000000) + 100000000}`,
+          email: `customer${calls.length + 1}@example.com`,
+          accountNumber: `ACC${String(calls.length + 1).padStart(8, '0')}`
+        },
+        agent: randomUser._id,
+        queue: randomQueue._id,
+        company: companyId,
+        timing: {
+          startTime: startTime,
+          answerTime: isAnswered ? new Date(startTime.getTime() + Math.random() * 90 * 1000) : undefined,
+          endTime: isAnswered ? new Date(startTime.getTime() + Math.random() * 720 * 1000 + 90 * 1000) : undefined,
+          waitTime: Math.floor(Math.random() * 180), // Increased wait time range
+          handleTime: Math.floor(Math.random() * 600) + 90, // Increased handle time
+          talkTime: Math.floor(Math.random() * 480) + 60,
+          holdTime: Math.floor(Math.random() * 120) // Increased hold time
+        },
+        outcome: {
+          resolved: Math.random() > 0.25, // Slightly better resolution rate
+          category: ['Sales', 'Support', 'Billing', 'Technical', 'Retention'][Math.floor(Math.random() * 5)],
+          subcategory: ['General', 'Urgent', 'Complex', 'Simple'][Math.floor(Math.random() * 4)],
+          priority: ['low', 'medium', 'high', 'urgent'][Math.floor(Math.random() * 4)],
+          notes: `Call ${calls.length + 1} notes - ${day === 0 ? 'Today' : `${day} days ago`}`,
+          tags: ['important', 'follow-up', 'resolved', 'escalated'].filter(() => Math.random() > 0.6)
+        },
+        quality: isAnswered ? {
+          satisfaction: Math.random() * 2 + 3, // Satisfaction score 3-5
+          qualityScore: Math.floor(Math.random() * 5) + 6, // Quality score 6-10
+          notes: `Quality assessment for call ${calls.length + 1}`,
+          agentRating: Math.floor(Math.random() * 3) + 3, // Agent rating 3-5
+          customerFeedback: Math.random() > 0.3 ? 'Positive' : 'Neutral'
+        } : undefined,
+        metadata: {
+          source: ['Web', 'Phone', 'Email', 'Chat', 'Social Media'][Math.floor(Math.random() * 5)],
+          campaign: Math.random() > 0.6 ? `Campaign ${Math.floor(Math.random() * 8) + 1}` : undefined,
+          disposition: isAnswered ? 'Completed' : 'Missed',
+          transferred: isTransferred,
+          conference: Math.random() > 0.85,
+          skills: ['sales', 'support', 'technical', 'billing', 'retention'].filter(() => Math.random() > 0.5)
+        }
+      };
+      
+      calls.push(call);
+    }
   }
   
   return calls;

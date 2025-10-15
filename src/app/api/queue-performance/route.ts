@@ -16,21 +16,21 @@ export async function GET() {
     // Get all queues for the company
     const queues = await Queue.find({ company: company._id });
     
-    // Get today's date range
+    // Get date range for the last 7 days
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    const weekAgo = new Date(today);
+    weekAgo.setDate(weekAgo.getDate() - 7);
     
-    // Get all calls for today
-    const todayCalls = await CallData.find({
+    // Get all calls for the last 7 days
+    const weekCalls = await CallData.find({
       company: company._id,
-      'timing.startTime': { $gte: today, $lt: tomorrow }
+      'timing.startTime': { $gte: weekAgo, $lt: today }
     }).populate('queue');
     
     // Calculate queue performance data
     const queuePerformanceData = queues.map(queue => {
-      const queueCalls = todayCalls.filter(call => 
+      const queueCalls = weekCalls.filter(call => 
         call.queue && call.queue._id.toString() === queue._id.toString()
       );
       
@@ -75,10 +75,10 @@ export async function GET() {
     });
     
     // Calculate overview metrics
-    const totalCalls = todayCalls.length;
-    const answeredCalls = todayCalls.filter(call => call.status === 'answered' || call.status === 'completed').length;
-    const abandonedCalls = todayCalls.filter(call => call.status === 'abandoned').length;
-    const totalWaitTime = todayCalls.reduce((sum, call) => sum + call.timing.waitTime, 0);
+    const totalCalls = weekCalls.length;
+    const answeredCalls = weekCalls.filter(call => call.status === 'answered' || call.status === 'completed').length;
+    const abandonedCalls = weekCalls.filter(call => call.status === 'abandoned').length;
+    const totalWaitTime = weekCalls.reduce((sum, call) => sum + call.timing.waitTime, 0);
     const averageWaitTime = totalCalls > 0 
       ? `${Math.floor(totalWaitTime / totalCalls / 60)}:${Math.floor(totalWaitTime / totalCalls % 60).toString().padStart(2, '0')}`
       : '0:00';

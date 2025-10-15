@@ -19,20 +19,20 @@ export async function GET() {
       role: { $in: ['agent', 'supervisor', 'manager'] }
     });
     
-    // Get today's date range
+    // Get date range for the last 7 days
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    const weekAgo = new Date(today);
+    weekAgo.setDate(weekAgo.getDate() - 7);
     
-    // Get all calls for today
-    const todayCalls = await CallData.find({
+    // Get all calls for the last 7 days
+    const weekCalls = await CallData.find({
       company: company._id,
-      'timing.startTime': { $gte: today, $lt: tomorrow }
+      'timing.startTime': { $gte: weekAgo, $lt: today }
     }).populate('agent');
     
-    // Ensure todayCalls is an array (safety check)
-    const callsArray = Array.isArray(todayCalls) ? todayCalls : [];
+    // Ensure weekCalls is an array (safety check)
+    const callsArray = Array.isArray(weekCalls) ? weekCalls : [];
     
     // Calculate agent performance data
     const agentPerformanceData = agents.map(agent => {
